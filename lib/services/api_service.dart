@@ -8,7 +8,7 @@ import 'package:http/http.dart';
 import 'package:path/path.dart';
 import 'dart:convert';
 import 'package:async/async.dart';
-import 'package:callme/config/constants.dart';
+import 'package:app.callme/config/constants.dart';
 
 typedef void OnUploadProgressCallback(int sentBytes, int totalBytes);
 

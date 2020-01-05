@@ -1,4 +1,4 @@
-name: callme
+name: app.callme
 description: A new Flutter project.
 
 # The following defines the version and build number for your application.
@@ -39,6 +39,8 @@ dependencies:
   web_socket_channel: ^1.1.0 #websocket
 
   connectivity: ^0.4.5+4 #check connect
+
+  flutter_statusbarcolor: ^0.2.3 #statusbar
 
 dev_dependencies:
   flutter_test:

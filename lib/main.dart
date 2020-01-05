@@ -1,11 +1,12 @@
 import 'package:bloc/bloc.dart';
+import 'package:app.callme/config/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:callme/config/routes.dart';
-import 'package:callme/config/colors.dart';
-import 'package:callme/bloc_delegate.dart';
-import 'package:callme/screens/main/bloc/bloc.dart';
+import 'package:app.callme/config/routes.dart';
+import 'package:app.callme/bloc_delegate.dart';
+import 'package:app.callme/screens/main/bloc/bloc.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'language.dart';
 import 'screens/main/bloc/main_bloc.dart';
 
@@ -18,6 +19,8 @@ class App extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    FlutterStatusbarcolor.setStatusBarColor(Colors.blue);
+
     return BlocProvider<MainBloc>(
       create: (BuildContext context) => MainBloc(),
       child: BlocBuilder<MainBloc, MainState>(
@@ -48,11 +51,8 @@ class App extends StatelessWidget {
               return supportedLocales.first;  
             },
             locale: Locale(state.language),
-            theme: ThemeData(
-              backgroundColor: AppColors.containerBg,
-              primarySwatch: Colors.blue,
-            ),
-            initialRoute: AppRoutes.home,  //set default route
+            theme: lightTheme,
+            initialRoute: AppRoutes.login,  //set default route
             onGenerateRoute: AppRoutes.appRoutes, // init list routes
           );
         },
