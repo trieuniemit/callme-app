@@ -10,10 +10,10 @@ class InitialLoginState extends LoginState {
 }
 
 
-class LoginFaildState extends LoginState {
+class LoginFailedState extends LoginState {
   final String message;
 
-  LoginFaildState(this.message);
+  LoginFailedState(this.message);
 
   @override
   List<Object> get props => [message];
