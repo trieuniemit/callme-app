@@ -1,3 +1,4 @@
+import 'package:app.callme/bloc/bloc.dart';
 import 'package:bloc/bloc.dart';
 import 'package:app.callme/config/themes.dart';
 import 'package:flutter/material.dart';
@@ -5,10 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:app.callme/config/routes.dart';
 import 'package:app.callme/bloc_delegate.dart';
-import 'package:app.callme/screens/main/bloc/bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'language.dart';
-import 'screens/main/bloc/main_bloc.dart';
 
 void main() {
   BlocSupervisor.delegate = AppBlocDelegate();
@@ -21,9 +20,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     FlutterStatusbarcolor.setStatusBarColor(Colors.blue);
 
-    return BlocProvider<MainBloc>(
-      create: (BuildContext context) => MainBloc(),
-      child: BlocBuilder<MainBloc, MainState>(
+    return BlocProvider<AppBloc>(
+      create: (BuildContext context) => AppBloc(),
+      child: BlocBuilder<AppBloc, AppState>(
         condition: (currentState, commingState) {
           return commingState is SwitchLanguageState;
         },
@@ -52,7 +51,7 @@ class App extends StatelessWidget {
             },
             locale: Locale(state.language),
             theme: lightTheme,
-            initialRoute: AppRoutes.login,  //set default route
+            initialRoute: AppRoutes.splash,  //set default route
             onGenerateRoute: AppRoutes.appRoutes, // init list routes
           );
         },
