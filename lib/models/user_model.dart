@@ -7,7 +7,7 @@ class User {
 
   User ({this.id, this.nickname, this.password, this.username, this.socketId});
 
-  User fromMap(Map map) {
+  static User fromMap(Map map) {
     return User(
       id: map.containsKey('id')?map['id']:0,
       username: map.containsKey('username')?map['username']:"",

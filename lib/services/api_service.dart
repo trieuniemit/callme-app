@@ -13,11 +13,16 @@ import 'package:app.callme/config/constants.dart';
 typedef void OnUploadProgressCallback(int sentBytes, int totalBytes);
 
 
-class Model {
-  static String cookies = '';
-  Map<String, String> defaultHeaders = {"Content-Type": "application/json"};
+class ApiService {
 
-  Future<Map> callApi({ String method = 'GET', String path = '', Map<String, dynamic> params, Map<String, String> apiHeaders}) async {
+  static const GET = 'GET';
+  static const POST = 'POST';
+  static const PUT = 'PUT';
+  static const DELETE = 'DELETE';
+
+  static  Map<String, String> defaultHeaders = {"Content-Type": "application/json"};
+
+  static Future<Map> request({ String method = 'GET', String path = '', Map<String, dynamic> params, Map<String, String> apiHeaders}) async {
     
     String url = Constants.API_URL + path;
     Client client = new Client();
@@ -27,7 +32,7 @@ class Model {
 
     apiHeaders.addAll(defaultHeaders);
     //add cookie
-    apiHeaders.addAll({"cookie": cookies});
+    // apiHeaders.addAll({"cookie": cookies});
 
     method = method.toLowerCase();
 
@@ -95,7 +100,7 @@ class Model {
   }
 
 
-  void uploadFile({String filePath,  Function(dynamic) onSuccess,Function(dynamic) onError, String fileName, bool removable = true}) async {    
+  static void uploadFile({String filePath,  Function(dynamic) onSuccess,Function(dynamic) onError, String fileName}) async {    
       File file = File(filePath);
 
       var stream = new ByteStream(DelegatingStream.typed(file.openRead()));
@@ -104,9 +109,6 @@ class Model {
 
       String urlUpload = "<Upload URL>";
 
-      if(!removable) {
-        urlUpload = urlUpload.replaceFirst('true', 'false');
-      }
       print('Upload: Start upload to: $urlUpload');
     
 
@@ -142,7 +144,7 @@ class Model {
   }
 
 
-   Future<String> downloadFile(String fileName, {String savePath,
+  static Future<String> downloadFile(String fileName, {String savePath,
      Function(int receivedBytes, int totalBytes) onDownloadProgress}) async {
 
 

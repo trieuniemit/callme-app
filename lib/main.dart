@@ -28,7 +28,7 @@ class App extends StatelessWidget {
         },
         builder: (context, state) {
           return MaterialApp(
-            title: 'CallMe',
+            title: 'Call Me',
             localizationsDelegates: [
               AppLocalizationsDelegate(),
               GlobalMaterialLocalizations.delegate,

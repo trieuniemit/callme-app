@@ -1,15 +1,11 @@
+import 'dart:convert';
+
+import 'package:app.callme/models/user_model.dart';
 import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppRepository {
-  Future<String> authenticate({
-    @required String username,
-    @required String password,
-  }) async {
-    await Future.delayed(Duration(seconds: 1));
-    return 'token';
-  }
-
+  
   Future<void> deleteToken() async {
     /// delete from keystore/keychain
     await Future.delayed(Duration(seconds: 1));
@@ -22,13 +18,22 @@ class AppRepository {
     return;
   }
 
-  Future<bool> hasToken() async {
+  Future<Map<String, dynamic>> checkAuth() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     try {
-      return prefs.getString('token') != null;
+      String token = prefs.getString('token');
+      Map userMap = Map<String, dynamic>.from(json.decode(prefs.getString('user')));
+
+      return {
+        "status": true,
+        "user":  User.fromMap(userMap),
+        "token": token
+      };
     } catch (_) {
-      return false;
+      return {
+        "status": false
+      };
     }
 
   }

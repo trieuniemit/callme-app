@@ -12,7 +12,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   static AppBloc of(context) {
-    return Provider.of<AppBloc>(context);
+    return Provider.of<AppBloc>(context, listen: false);
   }
 
   @override
@@ -23,18 +23,27 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     AppEvent event,
   ) async* {
     if (event is AppStarted) {
-      final bool hasToken = await appRepository.hasToken();
 
-      if (hasToken) {
-        yield AuthenticatedState();
+      Map<String, dynamic> localAuth = await appRepository.checkAuth();
+
+      if (localAuth['status']) {
+        yield AuthenticatedState(
+          token: localAuth['token'],
+          user: localAuth['user']
+        );
       } else {
         yield UnauthenticatedState();
       }
       
     } else if (event is LoggedIn) {
       yield LoadingState();
+
       await appRepository.persistToken(event.token);
-      yield AuthenticatedState();
+
+      yield AuthenticatedState(
+        token: event.token,
+        user: event.user
+      );
 
     } else if (event is LoggedOut) {
       yield LoadingState();
