@@ -36,7 +36,7 @@ class LoginScreen extends StatelessWidget {
       ],
       child: BlocListener<AppBloc, AppState>(
         listener: (context, state) {
-          if (state is AuthenticatedState || state is LoginSuccessState) {
+          if (state is AuthenticatedState) {
             Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.home, (r) => false);
           } else if (state is LoadingState) {
             Loading(context).show(text: AppLg.of(context).trans('logging_in'));

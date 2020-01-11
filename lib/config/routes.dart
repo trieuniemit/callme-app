@@ -1,7 +1,7 @@
 import 'package:app.callme/screens/login/login_screen.dart';
 import 'package:app.callme/screens/splash_screen.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:app.callme/screens/main_screen.dart';
+import 'package:app.callme/screens/main/main_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';

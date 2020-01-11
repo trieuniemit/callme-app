@@ -1,4 +1,3 @@
-import 'package:app.callme/models/user_model.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class AppEvent extends Equatable {
@@ -23,5 +22,5 @@ class LoginStart extends AppEvent {
   List<Object> get props => [username, password];
 }
 
-class LoggedOut extends AppEvent {}
+class LogOut extends AppEvent {}
 

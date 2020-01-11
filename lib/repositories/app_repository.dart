@@ -20,7 +20,7 @@ class AppRepository {
       path: Constants.LOGIN,
       params: {
         "password": password,
-        "email": username
+        "username": username
       }
     );
   
@@ -47,7 +47,6 @@ class AppRepository {
     try {
       String token = prefs.getString('token');
       Map userMap = Map<String, dynamic>.from(json.decode(prefs.getString('user')));
-
       return {
         "status": true,
         "user":  User.fromMap(userMap),

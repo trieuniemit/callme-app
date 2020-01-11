@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:app.callme/config/constants.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -7,40 +8,39 @@ typedef ListenFuntion = Function(Map message);
 
 class SocketConnection {
 
-  IOWebSocketChannel channel;
-  String type;
+  IOWebSocketChannel _channel;
+
+  int _reconnectCount = 5;
 
   StreamController _socketStreamController = new StreamController.broadcast();
-  Stream get receiveData => _socketStreamController.stream;
+  Stream get stream => _socketStreamController.stream;
   
   //create singleton
   static final SocketConnection _singleton = new SocketConnection._internal();
   SocketConnection._internal();
   static SocketConnection getInstance() => _singleton;
 
-  void connect() {
-    channel = IOWebSocketChannel.connect("<web_socket_url>");
-    register();
+  void connect(String token) {
+    _channel = IOWebSocketChannel.connect(Constants.SOCKET_URL);
+    register(token);
   }
 
-  void register() async {
-    String token = "<Uuser Token>";
-    //print('WS - Conecting with token: $token ----------------------------');
+  void register(String token) async {
     print('WS - Conecting... ----------------------------');
 
     if(token == null || token.isEmpty) return;
 
     var data = {
-      "type": "register",
-      "content": {
+      "action": "register",
+      "data": {
         "token": token
       }
     };
 
-    channel.sink.add(json.encode(data));
+    _channel.sink.add(json.encode(data));
     print('WS - Conected! -----------------------------');
 
-    channel.stream.listen(
+    _channel.stream.listen(
       (dynamic message) {
         print('WS: received data------------------------');
         _socketStreamController.add(json.decode(message));
@@ -53,8 +53,18 @@ class SocketConnection {
         
         if (connectivityResult == ConnectivityResult.mobile || 
           connectivityResult == ConnectivityResult.wifi) {
-          print('WS - trying to reconnect-------');
-           SocketConnection.getInstance().connect();
+          print('WS - trying to reconnect after 5s-------');
+          
+          _reconnectCount --;
+          if(_reconnectCount <= 0) {
+            _reconnectCount = 5;
+            return;
+          }
+
+          Future.delayed(Duration(seconds: 5), () {
+            SocketConnection.getInstance().connect(token);
+          });
+           
         } else {
           print('WS - no internet to reconnect-------');
         }
@@ -66,13 +76,17 @@ class SocketConnection {
 
   }
 
-  void sendData(String type, Map data) {
+  void emit(String action, Map data) {
     Map sinkData = {
-      "type": type,
-      "content": data
+      "action": action,
+      "type": data
     };
-    channel.sink.add(json.encode(sinkData));
+    _channel.sink.add(json.encode(sinkData));
     print(sinkData.toString());
+  }
+
+  void close() {
+    _channel.sink.close();
   }
 
 }

@@ -25,13 +25,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   ) async* {
     if (event is AppStarted) {
 
-      yield *appStarted(appRepository, event);
+      yield *_appStarted(appRepository, event);
       
     } else if(event is LoginStart) {
 
-      yield *loginStart(appRepository, event);
+      yield *_loginStart(appRepository, event);
 
-    } else if (event is LoggedOut) {
+    } else if (event is LogOut) {
 
       yield *_loggedOut(appRepository, event);
 
@@ -40,7 +40,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 }
 
 
-Stream<AppState> appStarted(appRepository, AppStarted event) async* {
+Stream<AppState> _appStarted(appRepository, AppStarted event) async* {
 
   Map<String, dynamic> localAuth = await appRepository.checkAuth();
 
@@ -56,7 +56,7 @@ Stream<AppState> appStarted(appRepository, AppStarted event) async* {
 }
 
 
-Stream<AppState> loginStart(appRepository, LoginStart event) async* {
+Stream<AppState> _loginStart(appRepository, LoginStart event) async* {
 
   yield LoadingState();
 
@@ -66,12 +66,12 @@ Stream<AppState> loginStart(appRepository, LoginStart event) async* {
   );
 
   if (res.containsKey('status') && res['status']) {
-    
+
     User user =  User.fromMap(res['user']);
 
     await appRepository.saveToken(user, res['token']);
 
-    yield LoginSuccessState(
+    yield AuthenticatedState(
       token: res['token'],
       user: user
     );
@@ -82,7 +82,7 @@ Stream<AppState> loginStart(appRepository, LoginStart event) async* {
 }
 
 
-Stream<AppState> _loggedOut(appRepository, LoggedOut event) async* {
+Stream<AppState> _loggedOut(appRepository, LogOut event) async* {
 
   await appRepository.deleteToken();
   yield UnauthenticatedState();
