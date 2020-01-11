@@ -1,4 +1,3 @@
-import 'package:app.callme/models/user_model.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class LoginEvent extends Equatable {
@@ -19,10 +18,10 @@ class LoginButtonPressed extends LoginEvent {
   List<Object> get props => [username, password];
 }
 
-class LoginFaild extends LoginEvent {
+class LoginFailed extends LoginEvent {
   final String message;
 
-  LoginFaild(this.message);
+  LoginFailed(this.message);
 
   @override
   List<Object> get props => [message];

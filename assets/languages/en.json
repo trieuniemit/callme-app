@@ -4,5 +4,7 @@
     "contact": "Contact",
     "login": "Login",
     "username": "Username",
-    "password": "Password"
+    "password": "Password",
+    "loading": "Loading...",
+    "logging_in": "Logging in..."
 }

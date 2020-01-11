@@ -1,21 +1,44 @@
 import 'dart:convert';
-
+import 'package:app.callme/config/constants.dart';
 import 'package:app.callme/models/user_model.dart';
+import 'package:app.callme/services/api_service.dart';
 import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class AppRepository {
-  
-  Future<void> deleteToken() async {
-    /// delete from keystore/keychain
+
+  Future<Map<String, dynamic>> authenticate({ 
+    @required String username, 
+    @required String password }) 
+  async {
+    
     await Future.delayed(Duration(seconds: 1));
-    return;
+
+    return await ApiService.request(
+      method: ApiService.POST,
+      path: Constants.LOGIN,
+      params: {
+        "password": password,
+        "email": username
+      }
+    );
+  
   }
 
-  Future<void> persistToken(String token) async {
-    /// write to keystore/keychain
-    await Future.delayed(Duration(seconds: 1));
-    return;
+  Future<void> deleteToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user');
+    await prefs.remove('token');
+  }
+
+
+  Future<void> saveToken(User user, String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('token', token);
+    await  prefs.setString('user', json.encode(user.toMap()));
+
   }
 
   Future<Map<String, dynamic>> checkAuth() async {

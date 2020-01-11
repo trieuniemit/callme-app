@@ -23,6 +23,26 @@ class AuthenticatedState extends AppState {
 }
 
 
+class LoginSuccessState extends AppState {
+  final User user;
+  final String token;
+
+  LoginSuccessState({this.user, this.token});
+  
+  @override
+  List<Object> get props => [token, user];
+}
+
+
+class LoginFailState extends AppState {
+  final String message;
+
+  LoginFailState(this.message);
+  
+  @override
+  List<Object> get props => [message];
+}
+
 class UnauthenticatedState extends AppState {}
 
 class LoadingState extends AppState {}

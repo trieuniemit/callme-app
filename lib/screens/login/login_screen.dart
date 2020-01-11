@@ -1,6 +1,7 @@
 import 'package:app.callme/bloc/app_bloc.dart';
 import 'package:app.callme/bloc/app_event.dart';
 import 'package:app.callme/bloc/app_state.dart';
+import 'package:app.callme/components/loading.dart';
 import 'package:app.callme/config/routes.dart';
 import 'package:app.callme/language.dart';
 import 'package:app.callme/screens/login/bloc/bloc.dart';
@@ -27,21 +28,29 @@ class LoginScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<LoginBloc>(
-          create: (context) => LoginBloc(context)
+          create: (context) => LoginBloc()
         ),
         BlocProvider<AppBloc>(
           create: (context) => AppBloc.of(context),
         )
       ],
-      child: BlocListener<LoginBloc, LoginState>(
+      child: BlocListener<AppBloc, AppState>(
         listener: (context, state) {
-          if (state is AuthenticatedState || state is LoginSuccess) {
+          if (state is AuthenticatedState || state is LoginSuccessState) {
             Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.home, (r) => false);
+          } else if (state is LoadingState) {
+            Loading(context).show(text: AppLg.of(context).trans('logging_in'));
+          } else if (state is LoginFailState) {
+            Navigator.of(context).pop();
+            LoginBloc.of(context).add(LoginFailed(state.message));
           }
         },
         child: Scaffold(
           body: BlocBuilder<LoginBloc, LoginState>(
             builder: (context, state) {
+              if (state is ValidFormState) {
+                AppBloc.of(context).add(LoginStart(username: usernameCtrl.text, password: passwordCtrl.text));
+              }
               return Container(
                 padding: EdgeInsets.only(bottom: 50, left: 50, right: 50),
                 child: Center(
@@ -67,7 +76,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 15),
-                      state is LoginFailState ? Text(state.message, style: TextStyle(color: Colors.red)) : Container(),
+                      state is LoginScreenFailState ? Text(state.message, style: TextStyle(color: Colors.red)) : Container(),
                       SizedBox(height: 30),
                       CupertinoButton(
                         color: Colors.blue,

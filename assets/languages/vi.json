@@ -4,5 +4,7 @@
     "contact": "Danh bạ",
     "login": "Đang nhập",
     "username": "Tên đăng nhập",
-    "password": "Mật khẩu"
+    "password": "Mật khẩu",
+    "loading": "Đang tải...",
+    "logging_in": "Đang đăng nhập..."
 }

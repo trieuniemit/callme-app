@@ -1,5 +1,3 @@
-import 'package:app.callme/models/user_model.dart';
-import 'package:app.callme/screens/login/bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class LoginState extends Equatable {
@@ -11,24 +9,15 @@ abstract class LoginState extends Equatable {
 class InitialLoginState extends LoginState {}
 
 
-class LoginSuccess extends LoginState {
-  final User user;
-  final String token;
+class InvalidFormState extends LoginState {}
 
-  LoginSuccess({this.user, this.token});
-  
-  @override
-  List<Object> get props => [token, user];
-}
+class ValidFormState extends LoginState {}
 
-
-class LoginFailState extends LoginState {
+class LoginScreenFailState extends LoginState {
   final String message;
 
-  LoginFailState(this.message);
-  
+  LoginScreenFailState(this.message);
+
   @override
   List<Object> get props => [message];
 }
-
-class InvalidFormState extends LoginState {}
