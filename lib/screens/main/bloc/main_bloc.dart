@@ -3,6 +3,7 @@ import 'package:app.callme/models/user_model.dart';
 import 'package:app.callme/repositories/contact_repository.dart';
 import 'package:app.callme/services/socket_connection.dart';
 import 'package:bloc/bloc.dart';
+import 'package:provider/provider.dart';
 import './bloc.dart';
 
 class MainBloc extends Bloc<MainEvent, MainState> {
@@ -14,6 +15,9 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   @override
   MainState get initialState => InitialMainState();
 
+  static MainBloc of(context) {
+    return Provider.of<MainBloc>(context, listen: false);
+  }
 
   MainBloc(this.token) {
     socketConnection.connect(token);

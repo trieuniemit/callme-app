@@ -1,9 +1,11 @@
 import 'package:app.callme/components/easy_listview.dart';
+import 'package:app.callme/config/routes.dart';
 import 'package:app.callme/models/user_model.dart';
 import 'package:app.callme/screens/main/bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 class ContactTab extends StatelessWidget {
   @override
@@ -24,7 +26,14 @@ class ContactTab extends StatelessWidget {
           itemBuilder: (context, index) {
             String name = contact[index].fullname;
             return CupertinoButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed(AppRoutes.calling,
+                  arguments: {
+                    'bloc': MainBloc.of(context),
+                    'user': contact[index]
+                  }
+                );
+              },
               padding: EdgeInsets.all(0),
               child: ListTile(
                 dense: false,

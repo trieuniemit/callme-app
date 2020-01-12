@@ -1,3 +1,4 @@
+import 'package:app.callme/screens/main/bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class MainEvent extends Equatable {
@@ -8,3 +9,11 @@ abstract class MainEvent extends Equatable {
 }
 
 class GetContact extends MainEvent {}
+
+class CallTo extends MainEvent {
+  final String socketId;
+
+  CallTo(this.socketId);
+  @override
+  List<Object> get props => [socketId];
+}
