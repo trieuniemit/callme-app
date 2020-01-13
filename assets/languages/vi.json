@@ -8,5 +8,7 @@
     "loading": "Đang tải...",
     "logging_in": "Đang đăng nhập...",
     "logout": "Đăng xuất",
-    "refresh": "Làm mới"
+    "refresh": "Làm mới",
+    "call_not_vvailable": "Người dùng bạn đang cố gắng gọi đang ngoại tuyến. Vui lòng thử lại sau.",
+    "error": "Lỗi!"
 }

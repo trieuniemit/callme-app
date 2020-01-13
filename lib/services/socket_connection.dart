@@ -55,11 +55,11 @@ class SocketConnection {
           connectivityResult == ConnectivityResult.wifi) {
           print('WS - trying to reconnect after 5s-------');
           
-          _reconnectCount --;
-          if(_reconnectCount <= 0) {
-            _reconnectCount = 5;
-            return;
-          }
+          // _reconnectCount --;
+          // if(_reconnectCount <= 0) {
+          //   _reconnectCount = 5;
+          //   return;
+          // }
 
           Future.delayed(Duration(seconds: 5), () {
             SocketConnection.getInstance().connect(token);
@@ -79,7 +79,7 @@ class SocketConnection {
   void emit(String action, Map data) {
     Map sinkData = {
       "action": action,
-      "type": data
+      "data": data
     };
     _channel.sink.add(json.encode(sinkData));
     print(sinkData.toString());

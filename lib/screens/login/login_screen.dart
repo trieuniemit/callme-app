@@ -25,15 +25,8 @@ class LoginScreen extends StatelessWidget {
     FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
     FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
 
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<LoginBloc>(
-          create: (context) => LoginBloc()
-        ),
-        BlocProvider<AppBloc>(
-          create: (context) => AppBloc.of(context),
-        )
-      ],
+    return BlocProvider<LoginBloc>(
+      create: (context) => LoginBloc(),
       child: BlocListener<AppBloc, AppState>(
         listener: (context, state) {
           if (state is AuthenticatedState) {

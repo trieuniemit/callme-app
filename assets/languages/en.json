@@ -8,5 +8,7 @@
     "loading": "Loading...",
     "logging_in": "Logging in...",
     "logout": "Logout",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "call_not_vvailable": "User you trying to call is not reachable. Please try again later.",
+    "error": "Error!"
 }
