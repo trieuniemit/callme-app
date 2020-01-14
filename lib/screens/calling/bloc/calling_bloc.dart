@@ -30,7 +30,7 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
   }
 
 
-  void _socketListener(Map data) {
+  void _socketListener(data) {
     Map<String, dynamic> dataMap = Map<String, dynamic>.from(data);
 
     switch(dataMap['action']) {

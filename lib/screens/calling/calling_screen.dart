@@ -54,53 +54,57 @@ class CallingSceen extends StatelessWidget {
           ),
           child: Container(
             color: Colors.black.withOpacity(0.4),
-            child: BlocBuilder<CallingBloc, CallingState>(
-              builder: (context, state) {
+            child: BlocListener<CallingBloc, CallingState>(
+              listener: (context, state) {
                 if (state is CallNotAvailableState) {
                   _onCallNotAvailable(context);
                 }
-                return SafeArea(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            CircleAvatar(
-                              child: Text(fullname[0], style: TextStyle(color: Colors.white, fontSize: 40)),
-                              maxRadius: 50,
-                            ),
-                            SizedBox(height: 10),
-                            Text(fullname, style: TextStyle(fontSize: 23, color: Colors.white)),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            CupertinoButton(
-                              onPressed: () {},
-                              child: CircleAvatar(
-                                maxRadius: 25,
-                                backgroundColor: Colors.red,
-                                child: Icon(Icons.call_end),
+              },
+              child: BlocBuilder<CallingBloc, CallingState>(
+                builder: (context, state) {
+                  return SafeArea(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              CircleAvatar(
+                                child: Text(fullname[0], style: TextStyle(color: Colors.white, fontSize: 40)),
+                                maxRadius: 50,
+                              ),
+                              SizedBox(height: 10),
+                              Text(fullname, style: TextStyle(fontSize: 23, color: Colors.white)),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              CupertinoButton(
+                                onPressed: () {},
+                                child: CircleAvatar(
+                                  maxRadius: 25,
+                                  backgroundColor: Colors.red,
+                                  child: Icon(Icons.call_end),
+                                )
+                              ),
+                              CupertinoButton(
+                                onPressed: () {},
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.green,
+                                  maxRadius: 25,
+                                  child: Icon(Icons.call),
+                                )
                               )
-                            ),
-                            CupertinoButton(
-                              onPressed: () {},
-                              child: CircleAvatar(
-                                backgroundColor: Colors.green,
-                                maxRadius: 25,
-                                child: Icon(Icons.call),
-                              )
-                            )
-                          ],
-                        )
-                      ],
+                            ],
+                          )
+                        ],
+                      )
                     )
-                  )
-                );
-              }
+                  );
+                }
+              )
             )
           )
         )
