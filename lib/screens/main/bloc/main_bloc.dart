@@ -36,23 +36,11 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   Stream<MainState> mapEventToState( MainEvent event ) async* {
     if (event is GetContact) {
       yield* _getContact();
-    } else if (event is CallTo) {
-      yield* _callTo(event);
-    } else if (event is CallNotAvailable) {
-      await Future.delayed(Duration(seconds: 2));
-      yield CallNotAvailableState();
     }
   }
 
   void _socketListener(data) {
     print("Data $data");
-    Map<String, dynamic> dataMap = Map<String, dynamic>.from(data);
-
-    switch(dataMap['action']) {
-      case 'call_not_available': 
-        this.add(CallNotAvailable());
-      break;
-    }
   }
 
   Stream<MainState> _getContact() async* {
@@ -66,10 +54,5 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       yield GetContactSuccessState(users);
     }
   }
-
-  Stream<MainState> _callTo(CallTo event) async * {
-    socketConnection.emit('call_start', {'target': event.socketId});
- }
-
 
 }

@@ -18,6 +18,3 @@ class GetContactSuccessState extends MainState {
   @override
   List<Object> get props => [contact];
 }
-
-
-class CallNotAvailableState extends MainState {}

@@ -8,13 +8,3 @@ abstract class MainEvent extends Equatable {
 }
 
 class GetContact extends MainEvent {}
-
-class CallTo extends MainEvent {
-  final String socketId;
-
-  CallTo(this.socketId);
-  @override
-  List<Object> get props => [socketId];
-}
-
-class CallNotAvailable extends MainEvent {}
