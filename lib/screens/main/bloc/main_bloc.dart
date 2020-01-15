@@ -36,7 +36,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   Stream<MainState> mapEventToState( MainEvent event ) async* {
     if (event is GetContact) {
       yield* _getContact();
-    }
+    } else if (event is )
   }
 
   void _socketListener(data) {
