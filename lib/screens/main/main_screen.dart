@@ -36,36 +36,48 @@ class MainScreen extends StatelessWidget {
                 onPressed: () {},
                 child: Icon(Icons.add, color: Colors.white),
               ),
-              body: BlocBuilder<MainBloc, MainState>(
-                builder: (context, state) {
-                  return RoundedContainer(
-                    child: Column(
-                      children: <Widget>[
-                        TabBar(
-                          tabs: <Widget>[
-                            Tab(child: Text(AppLg.of(context).trans('history'))),
-                            Tab(child: Text(AppLg.of(context).trans('contact')))
-                          ],
-                        ),
-                        Container(
-                          color: Colors.grey,
-                          height: 0.5,
-                        ),
-                        Expanded(
-                          child: ScrollConfiguration(
-                            behavior: NoScrollBehavior(),
-                            child: TabBarView(
-                              children: <Widget>[
-                                HistoryTab(),
-                                ContactTab()
-                              ],
+              body: BlocListener<MainBloc, MainState>(
+                listener: (context, state) {
+                  if ( state is GetDataSuccessState && state.hasCall) {
+                    Navigator.of(context).pushNamed(AppRoutes.calling,
+                      arguments: {
+                        'bloc': MainBloc.of(context),
+                        'user': null
+                      }
+                    );
+                  }
+                },
+                child: BlocBuilder<MainBloc, MainState>(
+                  builder: (context, state) {
+                    return RoundedContainer(
+                      child: Column(
+                        children: <Widget>[
+                          TabBar(
+                            tabs: <Widget>[
+                              Tab(child: Text(AppLg.of(context).trans('history'))),
+                              Tab(child: Text(AppLg.of(context).trans('contact')))
+                            ],
+                          ),
+                          Container(
+                            color: Colors.grey,
+                            height: 0.5,
+                          ),
+                          Expanded(
+                            child: ScrollConfiguration(
+                              behavior: NoScrollBehavior(),
+                              child: TabBarView(
+                                children: <Widget>[
+                                  HistoryTab(),
+                                  ContactTab()
+                                ],
+                              )
                             )
                           )
-                        )
-                      ],
-                    ),
-                  );
-                }
+                        ],
+                      ),
+                    );
+                  }
+                )
               )
             )
           );

@@ -9,6 +9,7 @@
     "logging_in": "Logging in...",
     "logout": "Logout",
     "refresh": "Refresh",
-    "call_not_available": "User you trying to call is not reachable. Please try again later.",
+    "call_not_available": "User you are calling is not reachable.",
+    "call_target_busy": "The user you are calling is busy.",
     "error": "Error!"
 }

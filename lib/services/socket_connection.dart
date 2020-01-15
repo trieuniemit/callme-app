@@ -30,14 +30,10 @@ class SocketConnection {
 
     if(token == null || token.isEmpty) return;
 
-    var data = {
-      "action": "register",
-      "data": {
-        "token": token
-      }
-    };
-
-    _channel.sink.add(json.encode(data));
+    this.emit('register', {
+      "token": token
+    });
+    
     print('WS - Conected! -----------------------------');
 
     _channel.stream.listen(

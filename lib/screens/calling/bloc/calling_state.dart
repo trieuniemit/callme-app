@@ -9,3 +9,5 @@ abstract class CallingState extends Equatable {
 class InitialCallingState extends CallingState {}
 
 class CallNotAvailableState extends CallingState {}
+
+class CallTargetBusyState extends CallingState {}

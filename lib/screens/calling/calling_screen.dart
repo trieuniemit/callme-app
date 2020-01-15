@@ -13,13 +13,13 @@ class CallingSceen extends StatelessWidget {
   final User user;
   const CallingSceen({this.mainBloc, this.user});
 
-  void _onCallNotAvailable(context) {
+  void _onCallNotAvailable(context, String alertKey) {
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (context) {
         return AlertDialog(
-          content: Text(AppLg.of(context).trans('call_not_available')),
+          content: Text(AppLg.of(context).trans(alertKey)),
           title: Text(AppLg.of(context).trans('error')),
           actions: <Widget>[
             FlatButton(
@@ -57,7 +57,9 @@ class CallingSceen extends StatelessWidget {
             child: BlocListener<CallingBloc, CallingState>(
               listener: (context, state) {
                 if (state is CallNotAvailableState) {
-                  _onCallNotAvailable(context);
+                  _onCallNotAvailable(context, 'call_not_available');
+                } else if (state is CallTargetBusyState) {
+                  _onCallNotAvailable(context, 'call_target_busy');
                 }
               },
               child: BlocBuilder<CallingBloc, CallingState>(

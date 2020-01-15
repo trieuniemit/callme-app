@@ -17,7 +17,10 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
 
   CallingBloc({this.mainBloc, this.target}) {
     socketConn.stream.listen(_socketListener);
-    socketConn.emit('call_start', {'target': target.socketId});
+    
+    if (target != null) {
+      socketConn.emit('call_start', {'target': target.socketId});
+    }
   }
  
 
@@ -26,6 +29,9 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
     if (event is CallNotAvailable) {
       await Future.delayed(Duration(seconds: 2));
       yield CallNotAvailableState();
+    } else if (event is CallTargetBusy) {
+      await Future.delayed(Duration(seconds: 2));
+      yield CallTargetBusyState();
     }
   }
 
@@ -36,6 +42,9 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
     switch(dataMap['action']) {
       case 'call_not_available': 
         this.add(CallNotAvailable());
+      break;
+      case 'call_busy':
+        this.add(CallTargetBusy());
       break;
     }
   }

@@ -9,6 +9,7 @@
     "logging_in": "Đang đăng nhập...",
     "logout": "Đăng xuất",
     "refresh": "Làm mới",
-    "call_not_available": "Người dùng bạn đang cố gắng gọi đang ngoại tuyến. Vui lòng thử lại sau.",
+    "call_not_available": "Người dùng bạn gọi hiện đang ngoại tuyến. Vui lòng thử lại sau.",
+    "call_target_busy": "Người dùng bận.",
     "error": "Lỗi!"
 }

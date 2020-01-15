@@ -51,7 +51,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         users.add(User.fromMap(u));
       }
 
-      yield GetContactSuccessState(users);
+      yield GetDataSuccessState(contact: users);
     }
   }
 

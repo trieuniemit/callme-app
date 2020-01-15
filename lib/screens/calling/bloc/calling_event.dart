@@ -6,5 +6,10 @@ abstract class CallingEvent extends Equatable {
   const CallingEvent();
 }
 
+class CallRequest extends CallingEvent {
+  
+}
 
 class CallNotAvailable extends CallingEvent {}
+
+class CallTargetBusy extends CallingEvent {}
