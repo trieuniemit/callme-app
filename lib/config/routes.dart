@@ -18,7 +18,11 @@ class AppRoutes {
         return _routeConfig(LoginScreen());
       case calling: 
         Map args = settings.arguments;
-        return _routeConfig(CallingSceen(mainBloc: args['bloc'], user: args['user']));
+        return _routeConfig(CallingSceen(
+          mainBloc: args['bloc'], 
+          user: args['user'], 
+          isRequest: args['is_request'])
+        );
       break;
       case home: 
       default: 

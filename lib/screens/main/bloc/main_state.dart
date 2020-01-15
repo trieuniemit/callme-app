@@ -1,42 +1,47 @@
 import 'package:app.callme/models/user_model.dart';
-import 'package:app.callme/screens/main/bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
-
-abstract class MainState extends Equatable {
-  const MainState();
-  @override
-  List<Object> get props => [];
-}
-
-class InitialMainState extends MainState {
-
-}
 
 
-class GetDataSuccessState extends MainState {
+class MainState  {
   final List<User> contact;
-  final bool hasCall;
   final List<User> histories;
+  final User callingUser;
+  final bool loading;
 
-  GetDataSuccessState({this.contact, this.histories, this.hasCall = false});
-  @override
-  List<Object> get props => [this.histories, this.contact, hasCall];
+  static MainState init() {
+    return MainState(loading: true);
+  }
 
-  GetDataSuccessState copyWith({ 
+  MainState({
+    this.contact = const [], 
+    this.histories = const [], 
+    this.callingUser,
+    this.loading = false
+  });
+
+  MainState copyWith({ 
     List<User> contact, 
-    bool hasCall,
+    User callingUser,
+    bool loading,
     List<User> histories}
   ) {
-    return GetDataSuccessState(
+    return MainState(
       contact: contact == null ? this.contact : contact,
       histories: histories == null ? this.histories : histories,
-      hasCall: hasCall == null ? this.hasCall : hasCall,
+      callingUser: callingUser == null ? this.callingUser : callingUser,
+      loading: loading == null ? this.loading : loading,
     );
   }
 
-  GetDataSuccessState callRequest() {
+  MainState callRecieved(User targetUser) {
     return this.copyWith(
-      hasCall: true
+      callingUser: targetUser
+    );
+  }
+
+  MainState contactLoaded(List<User> contact) {
+    return this.copyWith(
+      contact: contact,
+      loading: false
     );
   }
 

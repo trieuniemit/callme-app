@@ -12,7 +12,7 @@ class ContactTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<MainBloc, MainState>(
       builder: (context, state) {
-        if (state.runtimeType != GetDataSuccessState) {
+        if (state.loading) {
           return Center(
             child:  CupertinoActivityIndicator(
               radius: 20
@@ -20,7 +20,7 @@ class ContactTab extends StatelessWidget {
           );
         }
 
-        List<User> contact = state is GetDataSuccessState ? state.contact : [];
+        List<User> contact = state.contact;
         return EasyListView(
           itemCount: contact.length,
           itemBuilder: (context, index) {
@@ -30,6 +30,7 @@ class ContactTab extends StatelessWidget {
                 Navigator.of(context).pushNamed(AppRoutes.calling,
                   arguments: {
                     'bloc': MainBloc.of(context),
+                    'is_request': false,
                     'user': contact[index]
                   }
                 );

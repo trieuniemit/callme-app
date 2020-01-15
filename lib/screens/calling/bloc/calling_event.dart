@@ -6,10 +6,14 @@ abstract class CallingEvent extends Equatable {
   const CallingEvent();
 }
 
-class CallRequest extends CallingEvent {
-  
-}
-
 class CallNotAvailable extends CallingEvent {}
 
 class CallTargetBusy extends CallingEvent {}
+
+class CallEnded extends CallingEvent {
+  final bool emitToTarget;
+
+  CallEnded(this.emitToTarget);
+  @override
+  List<Object> get props => [emitToTarget];
+}

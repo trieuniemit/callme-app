@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:app.callme/config/constants.dart';
+import 'package:app.callme/models/socket_message.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -12,8 +13,8 @@ class SocketConnection {
 
   int _reconnectCount = 5;
 
-  StreamController _socketStreamController = new StreamController.broadcast();
-  Stream get stream => _socketStreamController.stream;
+  StreamController<SocketMessage> _socketStreamController = StreamController.broadcast();
+  Stream<SocketMessage> get stream => _socketStreamController.stream;
   
   //create singleton
   static final SocketConnection _singleton = new SocketConnection._internal();
@@ -39,9 +40,7 @@ class SocketConnection {
     _channel.stream.listen(
       (dynamic message) {
         print('WS: received data------------------------');
-        _socketStreamController.add(json.decode(message));
-        //channel.sink.close();
-        //print('WS: ${message.toString()} \n-------------------------------'); 
+        _socketStreamController.add(SocketMessage(message));
       },
       onDone: () async {
         print('WS - was closed--------------------');

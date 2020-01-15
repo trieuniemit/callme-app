@@ -3,6 +3,7 @@ import 'package:app.callme/components/no_scroll_behavior.dart';
 import 'package:app.callme/components/rounded_container.dart';
 import 'package:app.callme/config/routes.dart';
 import 'package:app.callme/language.dart';
+import 'package:app.callme/models/user_model.dart';
 import 'package:app.callme/screens/main/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -14,6 +15,17 @@ import 'history_tab.dart';
 
 class MainScreen extends StatelessWidget {
 
+  void _onCallReceive(context, user) {
+    print("Call received.");
+    Navigator.of(context).pushNamed(AppRoutes.calling,
+      arguments: {
+        'bloc': MainBloc.of(context),
+        'user': user,
+        'is_request': true,
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -22,34 +34,29 @@ class MainScreen extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: BlocBuilder<AppBloc, AppState>(
-        builder: (context, state) {
+        builder: (context, appState) {
           return BlocProvider<MainBloc>(
-            create: (context) => MainBloc(state is AuthenticatedState ? state.token : ''),
-            child: Scaffold(
-              appBar: AppBar(
-                title: Text('Call Me'),
-                elevation: 0.0,
-                actions: _buildActions(context, state),
-              ),
-              backgroundColor: Theme.of(context).primaryColor,
-              floatingActionButton: FloatingActionButton(
-                onPressed: () {},
-                child: Icon(Icons.add, color: Colors.white),
-              ),
-              body: BlocListener<MainBloc, MainState>(
-                listener: (context, state) {
-                  if ( state is GetDataSuccessState && state.hasCall) {
-                    Navigator.of(context).pushNamed(AppRoutes.calling,
-                      arguments: {
-                        'bloc': MainBloc.of(context),
-                        'user': null
-                      }
-                    );
-                  }
-                },
-                child: BlocBuilder<MainBloc, MainState>(
-                  builder: (context, state) {
-                    return RoundedContainer(
+            create: (context) => MainBloc(appState is AuthenticatedState ? appState.token : ''),
+            child:  BlocBuilder<MainBloc, MainState>(
+              builder: (context, state) {
+                return BlocListener<MainBloc, MainState>(
+                  listener: (context, state) {
+                    if ( state.callingUser != null) {
+                      _onCallReceive(context, state.callingUser);
+                    }
+                  },
+                  child: Scaffold(
+                    appBar: AppBar(
+                      title: Text('Call Me'),
+                      elevation: 0.0,
+                      actions: _buildActions(context, appState),
+                    ),
+                    backgroundColor: Theme.of(context).primaryColor,
+                    floatingActionButton: FloatingActionButton(
+                      onPressed: () {},
+                      child: Icon(Icons.add, color: Colors.white),
+                    ),
+                    body: RoundedContainer(
                       child: Column(
                         children: <Widget>[
                           TabBar(
@@ -75,11 +82,11 @@ class MainScreen extends StatelessWidget {
                           )
                         ],
                       ),
-                    );
-                  }
-                )
-              )
-            )
+                    )
+                  )
+                );
+            }
+            )  
           );
         },
       )
@@ -106,6 +113,7 @@ class MainScreen extends StatelessWidget {
               onSelected: (MenuItemChoice menuItemChoice) {
                 switch (menuItemChoice.key) {
                   case 'refresh':
+                    MainBloc.of(context).add(GetContact());
                   break;
                   case 'logout':
                     AppBloc.of(context).add(LogOut());
