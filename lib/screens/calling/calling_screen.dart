@@ -88,7 +88,9 @@ class CallingSceen extends StatelessWidget {
                         )
                       ),
                       CupertinoButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          CallingBloc.of(context).add(CallAccepted(true));
+                        },
                         child: CircleAvatar(
                           backgroundColor: Colors.green,
                           maxRadius: 25,
@@ -96,10 +98,11 @@ class CallingSceen extends StatelessWidget {
                         )
                       )
                     ];
-                      if(!this.isRequest) {
+                    if(!this.isRequest) {
                       buttons.removeAt(1);
                     }
-                      return SafeArea(
+                    
+                    return SafeArea(
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -113,6 +116,21 @@ class CallingSceen extends StatelessWidget {
                                 ),
                                 SizedBox(height: 10),
                                 Text(fullname, style: TextStyle(fontSize: 23, color: Colors.white)),
+                                SizedBox(height: 16),
+                                StreamBuilder<String>(
+                                  stream: CallingBloc.of(context).noticeStream,
+                                  builder: (context, snap) {
+                                    String outputStr = "";
+                                    if (!snap.hasData) {
+                                      String lgKey = !isRequest ? 'ringing' : 'calling';
+                                      outputStr = AppLg.of(context).trans(lgKey);
+                                    } else {
+                                      outputStr = snap.data;
+                                    }
+                                    return Text(outputStr, style: TextStyle(fontSize: 18, color: Colors.white70));
+                                  },
+
+                                )
                               ],
                             ),
                             Row(

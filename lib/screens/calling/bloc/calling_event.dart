@@ -10,10 +10,17 @@ class CallNotAvailable extends CallingEvent {}
 
 class CallTargetBusy extends CallingEvent {}
 
-class CallEnded extends CallingEvent {
-  final bool emitToTarget;
-
-  CallEnded(this.emitToTarget);
+class CallAccepted extends CallingEvent {
+  final bool emit;
+  CallAccepted(this.emit);
   @override
-  List<Object> get props => [emitToTarget];
+  List<Object> get props => [emit];
+}
+
+class CallEnded extends CallingEvent {
+  final bool emit;
+
+  CallEnded(this.emit);
+  @override
+  List<Object> get props => [emit];
 }

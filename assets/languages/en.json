@@ -11,5 +11,7 @@
     "refresh": "Refresh",
     "call_not_available": "User you are calling is not reachable.",
     "call_target_busy": "The user you are calling is busy.",
-    "error": "Error!"
+    "error": "Error!",
+    "ringing": "Ringing...",
+    "calling": "Calling you..."
 }
