@@ -1,4 +1,5 @@
 import 'package:app.callme/models/user_model.dart';
+import 'package:app.callme/screens/main/bloc/bloc.dart';
 
 
 class MainState  {
@@ -43,6 +44,17 @@ class MainState  {
       contact: contact,
       loading: false
     );
+  }
+
+  MainState updateContact(User user) {
+    try {
+      int indexContact = contact.indexWhere((c) => c.id == user.id);
+      contact[indexContact].socketId = user.socketId;
+      return copyWith();
+    } catch (_) {
+      contact.insert(0, user);
+      return copyWith();
+    }
   }
 
 }

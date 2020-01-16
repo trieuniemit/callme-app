@@ -10,4 +10,8 @@ class SocketMessage {
     data = Map<String, dynamic>.from(mData["data"]);
   }
   
+  @override
+  String toString() {
+    return "SocketMessage {action: $action, data: $data}";
+  }
 }

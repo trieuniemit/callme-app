@@ -17,3 +17,11 @@ class CallReceived extends MainEvent {
   @override
   List<Object> get props => [user];
 }
+
+class UpdateContact extends MainEvent {
+  final User user;
+
+  UpdateContact(this.user);
+  @override
+  List<Object> get props => [user];
+}

@@ -38,14 +38,21 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       yield* _getContact();
     } else if(event is CallReceived) {
       yield state.callRecieved(event.user);
+    } else if (event is UpdateContact) {
+      yield state.updateContact(event.user);
     }
   }
 
   void _mapSocketActions(SocketMessage message) {
+      print(message);
       switch(message.action) {
         case 'call_received':
           User from = User.fromMap(message.data["user"]);
           this.add(CallReceived(from));
+        break;
+        case 'user_online':
+          User user = User.fromMap(message.data["user"]);
+          this.add(UpdateContact(user));
         break;
       }
   }

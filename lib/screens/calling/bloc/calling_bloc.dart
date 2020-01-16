@@ -39,7 +39,10 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
     super.close();
     _streamSubscription.cancel();
     _noticeCtl.close();
-    _timer.cancel();
+    
+    if (_timer != null) {
+      _timer.cancel();
+    }
   }
 
   @override
@@ -60,8 +63,13 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
         socketConn.emit('call_accepted', {'target': user.socketId});
       }
       yield CallAcceptedState();
+
       _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-        _noticeCtl.sink.add(timer.tick.toString());
+        Duration duration = Duration(seconds: timer.tick);
+        String seconds = duration.inSeconds.remainder(60).toString().padLeft(2,'0');
+        String mins = duration.inMinutes.remainder(60).toString().padLeft(2,'0');
+        String hours = duration.inHours.toString().padLeft(2,'0');
+        _noticeCtl.sink.add("$hours:$mins:$seconds");
       });
     }
   }
