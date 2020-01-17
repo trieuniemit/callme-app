@@ -15,3 +15,5 @@ class CallTargetBusyState extends CallingState {}
 class CallEndedState extends CallingState {}
 
 class CallAcceptedState extends CallingState {}
+
+class CallBusyState extends CallingState {}

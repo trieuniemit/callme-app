@@ -10,6 +10,8 @@ class CallNotAvailable extends CallingEvent {}
 
 class CallTargetBusy extends CallingEvent {}
 
+class CallBusy extends CallingEvent {}
+
 class CallAccepted extends CallingEvent {
   final bool emit;
   CallAccepted(this.emit);

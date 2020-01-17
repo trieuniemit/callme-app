@@ -58,6 +58,9 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
         socketConn.emit('call_end', {'target': user.socketId});
       }
       yield CallEndedState();
+    } else if (event is CallBusy) {
+      socketConn.emit('call_busy', {'target': user.socketId});
+      yield CallBusyState();
     } else if (event is CallAccepted) {
       if (event.emit) {
         socketConn.emit('call_accepted', {'target': user.socketId});

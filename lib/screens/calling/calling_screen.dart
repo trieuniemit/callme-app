@@ -72,6 +72,8 @@ class CallingSceen extends StatelessWidget {
                     _onCallNotAvailable(context, 'call_target_busy');
                   } else if (state is CallEndedState) {
                     _onCallEnded(context);
+                  } else if (state is CallBusyState) {
+                    Navigator.of(context).pop();
                   }
                 },
                 child: BlocBuilder<CallingBloc, CallingState>(
@@ -79,7 +81,11 @@ class CallingSceen extends StatelessWidget {
                     List<Widget> buttons = <Widget>[
                       CupertinoButton(
                         onPressed: () {
-                          CallingBloc.of(context).add(CallEnded(true));
+                          if (isRequest && state is InitialCallingState) {
+                            CallingBloc.of(context).add(CallBusy());
+                          } else {
+                            CallingBloc.of(context).add(CallEnded(true));
+                          }
                         },
                         child: CircleAvatar(
                           maxRadius: 25,
@@ -98,7 +104,7 @@ class CallingSceen extends StatelessWidget {
                         )
                       )
                     ];
-                    if(!this.isRequest) {
+                    if(!this.isRequest || state is CallAcceptedState) {
                       buttons.removeAt(1);
                     }
                     
