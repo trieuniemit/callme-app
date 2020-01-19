@@ -6,14 +6,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:flutter_webrtc/rtc_video_view.dart';
 
 class CallingSceen extends StatelessWidget {
 
   final MainBloc mainBloc;
-  final User user;
   final bool isRequest;
 
-  const CallingSceen({this.mainBloc, this.user, this.isRequest});
+  const CallingSceen({this.mainBloc, this.isRequest});
 
   void _onCallNotAvailable(context, String alertKey) {
     showDialog(
@@ -46,14 +46,12 @@ class CallingSceen extends StatelessWidget {
 
     FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
 
-    String fullname = user.fullname;
-
     return WillPopScope(
       onWillPop: () async {
-        return false;
+        return true;
       },
       child: BlocProvider<CallingBloc>(
-        create: (context) => CallingBloc(mainBloc: mainBloc, user: user, isRequest: isRequest),
+        create: (context) => CallingBloc(mainBloc: mainBloc, isRequest: isRequest),
         child:  Scaffold(
           body: Container(
             decoration: BoxDecoration(
@@ -78,13 +76,15 @@ class CallingSceen extends StatelessWidget {
                 },
                 child: BlocBuilder<CallingBloc, CallingState>(
                   builder: (context, state) {
+                    User callingUser = CallingBloc.of(context).mainBloc.state.callingUser;
+                    
                     List<Widget> buttons = <Widget>[
                       CupertinoButton(
                         onPressed: () {
                           if (isRequest && state is InitialCallingState) {
                             CallingBloc.of(context).add(CallBusy());
                           } else {
-                            CallingBloc.of(context).add(CallEnded(true));
+                            CallingBloc.of(context).add(CallEnded());
                           }
                         },
                         child: CircleAvatar(
@@ -95,7 +95,7 @@ class CallingSceen extends StatelessWidget {
                       ),
                       CupertinoButton(
                         onPressed: () {
-                          CallingBloc.of(context).add(CallAccepted(true));
+                          CallingBloc.of(context).add(CallAccepted());
                         },
                         child: CircleAvatar(
                           backgroundColor: Colors.green,
@@ -117,11 +117,11 @@ class CallingSceen extends StatelessWidget {
                             Column(
                               children: <Widget>[
                                 CircleAvatar(
-                                  child: Text(fullname[0], style: TextStyle(color: Colors.white, fontSize: 40)),
+                                  child: Text(callingUser.fullname[0], style: TextStyle(color: Colors.white, fontSize: 40)),
                                   maxRadius: 50,
                                 ),
                                 SizedBox(height: 10),
-                                Text(fullname, style: TextStyle(fontSize: 23, color: Colors.white)),
+                                Text(callingUser.fullname, style: TextStyle(fontSize: 23, color: Colors.white)),
                                 SizedBox(height: 16),
                                 StreamBuilder<String>(
                                   stream: CallingBloc.of(context).noticeStream,
@@ -138,6 +138,24 @@ class CallingSceen extends StatelessWidget {
 
                                 )
                               ],
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  margin: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                                  width: 200,
+                                  height: 200,
+                                  child: new RTCVideoView(CallingBloc.of(context).localRenderer),
+                                  decoration: new BoxDecoration(color: Colors.black54),
+                                ),
+                                Container(
+                                  margin: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                                  width: 200,
+                                  height: 200,
+                                  child: new RTCVideoView(CallingBloc.of(context).remoteRenderer),
+                                  decoration: new BoxDecoration(color: Colors.black54),
+                                ),
+                              ]
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,

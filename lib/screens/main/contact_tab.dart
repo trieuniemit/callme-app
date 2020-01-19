@@ -27,6 +27,7 @@ class ContactTab extends StatelessWidget {
             String name = contact[index].fullname;
             return CupertinoButton(
               onPressed: () {
+                MainBloc.of(context).add(CallToUser(contact[index]));
                 Navigator.of(context).pushNamed(AppRoutes.calling,
                   arguments: {
                     'bloc': MainBloc.of(context),

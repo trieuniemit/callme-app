@@ -5,7 +5,8 @@ import 'package:app.callme/screens/main/bloc/bloc.dart';
 class MainState  {
   final List<User> contact;
   final List<User> histories;
-  final User callingUser;
+  User callingUser;
+  final Map<String, dynamic> webRTCDesc;
   final bool loading;
 
   static MainState init() {
@@ -13,6 +14,7 @@ class MainState  {
   }
 
   MainState({
+    this.webRTCDesc, 
     this.contact = const [], 
     this.histories = const [], 
     this.callingUser,
@@ -22,10 +24,12 @@ class MainState  {
   MainState copyWith({ 
     List<User> contact, 
     User callingUser,
+    Map<String, dynamic>webRTCDesc,
     bool loading,
     List<User> histories}
   ) {
     return MainState(
+      webRTCDesc: webRTCDesc==null?this.webRTCDesc:webRTCDesc,
       contact: contact == null ? this.contact : contact,
       histories: histories == null ? this.histories : histories,
       callingUser: callingUser == null ? this.callingUser : callingUser,
@@ -33,10 +37,15 @@ class MainState  {
     );
   }
 
-  MainState callRecieved(User targetUser) {
+  MainState callRecieved(User targetUser, {Map<String, dynamic> webRTCDesc}) {
     return this.copyWith(
+      webRTCDesc: webRTCDesc,
       callingUser: targetUser
     );
+  }
+
+  void callToUser(User target) {
+    this.callingUser = target;
   }
 
   MainState contactLoaded(List<User> contact) {

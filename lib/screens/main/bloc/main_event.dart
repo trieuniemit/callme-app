@@ -12,8 +12,17 @@ class GetContact extends MainEvent {}
 
 class CallReceived extends MainEvent {
   final User user;
+  final Map<String, dynamic> webRTCDesc;
 
-  CallReceived(this.user);
+  CallReceived(this.user, {this.webRTCDesc});
+  @override
+  List<Object> get props => [user, webRTCDesc];
+}
+
+class CallToUser extends MainEvent {
+  final User user;
+
+  CallToUser(this.user);
   @override
   List<Object> get props => [user];
 }

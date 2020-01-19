@@ -20,7 +20,6 @@ class AppRoutes {
         Map args = settings.arguments;
         return _routeConfig(CallingSceen(
           mainBloc: args['bloc'], 
-          user: args['user'], 
           isRequest: args['is_request'])
         );
       break;

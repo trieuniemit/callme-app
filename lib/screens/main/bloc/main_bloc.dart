@@ -37,24 +37,28 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     if (event is GetContact) {
       yield* _getContact();
     } else if(event is CallReceived) {
-      yield state.callRecieved(event.user);
+      yield state.callRecieved(event.user, webRTCDesc: event.webRTCDesc);
     } else if (event is UpdateContact) {
       yield state.updateContact(event.user);
+    } else if (event is CallToUser) {
+      state.callToUser(event.user);
     }
   }
 
   void _mapSocketActions(SocketMessage message) {
-      print(message);
-      switch(message.action) {
-        case 'call_received':
-          User from = User.fromMap(message.data["user"]);
-          this.add(CallReceived(from));
-        break;
-        case 'user_online':
-          User user = User.fromMap(message.data["user"]);
-          this.add(UpdateContact(user));
-        break;
-      }
+    print('WebSocket: action - ${message.action}');
+    switch(message.action) {
+      case 'call_received':
+        User from = User.fromMap(message.data["user"]);
+        Map<String,dynamic> webRTCDesc = message.data['description'];
+        //print("webRTCDesc: " + webRTCDesc.toString());
+        this.add(CallReceived(from, webRTCDesc: webRTCDesc));
+      break;
+      case 'user_online':
+        User user = User.fromMap(message.data["user"]);
+        this.add(UpdateContact(user));
+      break;
+    }
   }
 
   Stream<MainState> _getContact() async* {
@@ -65,7 +69,6 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       List<User> users = List();
       for (var u in res['users']) {
         users.add(User.fromMap(u));
-        print(u['socket_id']);
       }
       yield state.contactLoaded(users);
     }

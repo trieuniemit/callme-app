@@ -77,7 +77,6 @@ class SocketConnection {
       "data": data
     };
     _channel.sink.add(json.encode(sinkData));
-    print(sinkData.toString());
   }
 
   void close() {

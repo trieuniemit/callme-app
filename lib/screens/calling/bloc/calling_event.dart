@@ -12,17 +12,10 @@ class CallTargetBusy extends CallingEvent {}
 
 class CallBusy extends CallingEvent {}
 
-class CallAccepted extends CallingEvent {
-  final bool emit;
-  CallAccepted(this.emit);
-  @override
-  List<Object> get props => [emit];
-}
+class CallAccepted extends CallingEvent {}
 
-class CallEnded extends CallingEvent {
-  final bool emit;
+class CallEnded extends CallingEvent {}
 
-  CallEnded(this.emit);
-  @override
-  List<Object> get props => [emit];
-}
+class UserCallAccepted extends CallingEvent {}
+
+class UserCallEnded extends CallingEvent {}

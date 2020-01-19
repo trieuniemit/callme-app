@@ -3,7 +3,6 @@ import 'package:app.callme/components/no_scroll_behavior.dart';
 import 'package:app.callme/components/rounded_container.dart';
 import 'package:app.callme/config/routes.dart';
 import 'package:app.callme/language.dart';
-import 'package:app.callme/models/user_model.dart';
 import 'package:app.callme/screens/main/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
