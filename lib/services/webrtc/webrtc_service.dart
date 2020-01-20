@@ -167,6 +167,13 @@ class WebRTCService {
       RTCSessionDescription s = await pc.createAnswer(media == WebRTCMedia.DATA ? dataChannelConst : mediaConst);
       pc.setLocalDescription(s);
 
+      if (this._remoteCandidates.length > 0) {
+        _remoteCandidates.forEach((candidate) async {
+          await pc.addCandidate(candidate);
+        });
+        _remoteCandidates.clear();
+      }
+
       return {
         'description': {'sdp': s.sdp, 'type': s.type},
         'session_id': sessionId,
@@ -183,18 +190,7 @@ class WebRTCService {
     if (pc != null) {
       await pc.addCandidate(candidate);
     } else {
-      print("WebRTC: Can't add candidate=======");
       _remoteCandidates.add(candidate);
-    }
-  }
-
-  void setRemoteDescription(String sessionId, RTCSessionDescription description) async {
-    var pc = _peerConnections[sessionId];
-    if (pc != null) {
-      print("WebRTC: Set remote description=======");
-      await pc.setRemoteDescription(description);
-    } else {
-      print("WebRTC: Can't cet remote description. Connection not found=======");
     }
   }
 }
