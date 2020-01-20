@@ -56,7 +56,7 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
   void initRenderers() async {
     this._webRTCService = WebRTCService(
       onCandidate: (candidate) {
-        //socketConn.emit('call_candidate', {'target': user.socketId, ...candidate});
+        socketConn.emit('call_candidate', {'target': user.socketId, ...candidate});
       },
       onAddLocalStream: (stream) {
         //localRenderer.srcObject = stream;
@@ -112,14 +112,11 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
 
       if (event is CallAccepted) {
         String sessionId = user.socketId;
-        socketConn.emit('call_accepted', {'target': user.socketId});
-        
         this._webRTCService.createOffer(sessionId: sessionId, media: WebRTCMedia.VIDEO, useScreen: false).then((offer) {
-          socketConn.emit('call_offer', {'target': user.socketId, ...offer});
+          socketConn.emit('call_accepted', {'target': user.socketId, ...offer});
         });
       } else {
-        // create answer for webrtc
-        //socketConn.emit('call_accepted', {'target': user.socketId});
+
       }
 
       _timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -147,6 +144,19 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
         this.add(UserCallEnded());
       break;
       case 'call_accepted':
+        RTCSessionDescription description = RTCSessionDescription(
+          message.data['description']['sdp'], 
+          message.data['description']['type']
+        );
+        Map<String, dynamic> answerData = await this._webRTCService.createAnswer(
+          sessionId: message.data['session_id'], 
+          media: WebRTCMedia.VIDEO, 
+          useScreen: false,
+          remoteDesc: description
+        );
+
+        socketConn.emit('call_answer', {'target': message.data['from'], ...answerData});
+
         this.add(UserCallAccepted());
       break;
       case 'call_candidate':
@@ -161,19 +171,13 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
         this._webRTCService.addCandidate(message.data['session_id'], candidate);
         
       break;
-      case 'call_offer':
-         RTCSessionDescription description = RTCSessionDescription(
-          mainBloc.state.webRTCDesc['sdp'], 
-          mainBloc.state.webRTCDesc['type']
-        );
-        Map<String, dynamic> answerData = await this._webRTCService.createAnswer(
-          sessionId: user.socketId, 
-          media: WebRTCMedia.VIDEO, 
-          useScreen: false,
-          remoteDesc: description
-        );
 
-        socketConn.emit('call_answer', {'target': user.socketId, ...answerData});
+      case 'call_answer':
+        // RTCSessionDescription description = RTCSessionDescription(
+        //   message.data['description']['sdp'], 
+        //   message.data['description']['type']
+        // );
+        // this._webRTCService.setRemoteDescription(message.data['session_id'], description);
       break;
     }
   }

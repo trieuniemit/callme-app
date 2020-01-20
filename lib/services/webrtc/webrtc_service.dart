@@ -124,7 +124,7 @@ class WebRTCService {
    * Create offer for current connect session
    */
   Future<Map<String, dynamic>> createOffer({@required String sessionId, @required WebRTCMedia media, @required bool useScreen}) async {
-
+    print("WebRTC: Create offer============");
     RTCPeerConnection pc = await _createPeerConnection(sessionId, media, useScreen);
     
     _peerConnections[sessionId] = pc;
@@ -157,7 +157,7 @@ class WebRTCService {
    */
   Future<Map<String, dynamic>> createAnswer({@required String sessionId, @required WebRTCMedia media, 
     @required bool useScreen, @required RTCSessionDescription remoteDesc}) async {
-
+    print("WebRTC: Create answer============");
     try {
       RTCPeerConnection pc = await _createPeerConnection(sessionId, media, useScreen);
       print("WebRTC: Answer desc=========");
@@ -185,6 +185,16 @@ class WebRTCService {
     } else {
       print("WebRTC: Can't add candidate=======");
       _remoteCandidates.add(candidate);
+    }
+  }
+
+  void setRemoteDescription(String sessionId, RTCSessionDescription description) async {
+    var pc = _peerConnections[sessionId];
+    if (pc != null) {
+      print("WebRTC: Set remote description=======");
+      await pc.setRemoteDescription(description);
+    } else {
+      print("WebRTC: Can't cet remote description. Connection not found=======");
     }
   }
 }
