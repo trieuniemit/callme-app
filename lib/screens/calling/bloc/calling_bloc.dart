@@ -148,14 +148,12 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
           message.data['description']['sdp'], 
           message.data['description']['type']
         );
-        Map<String, dynamic> answerData = await this._webRTCService.createAnswer(
+        await this._webRTCService.createAnswer(
           sessionId: message.data['session_id'], 
           media: WebRTCMedia.VIDEO, 
           useScreen: false,
           remoteDesc: description
         );
-
-        socketConn.emit('call_answer', {'target': message.data['from'], ...answerData});
 
         this.add(UserCallAccepted());
       break;
