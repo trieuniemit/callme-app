@@ -39,7 +39,6 @@ class SocketConnection {
 
     _channel.stream.listen(
       (dynamic message) {
-        print('WS: received data------------------------');
         _socketStreamController.add(SocketMessage(message));
       },
       onDone: () async {

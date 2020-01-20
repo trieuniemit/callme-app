@@ -37,7 +37,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     if (event is GetContact) {
       yield* _getContact();
     } else if(event is CallReceived) {
-      yield state.callRecieved(event.user, webRTCDesc: event.webRTCDesc);
+      yield state.callRecieved(event.user, offerRecieved: event.offerRecieved);
     } else if (event is UpdateContact) {
       yield state.updateContact(event.user);
     } else if (event is CallToUser) {
@@ -46,13 +46,15 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   }
 
   void _mapSocketActions(SocketMessage message) {
-    print('WebSocket: action - ${message.action}');
+    if(message.action != 'call_candidate') {
+      print('WebSocket: action - ${message.action}');
+    }
     switch(message.action) {
       case 'call_received':
         User from = User.fromMap(message.data["user"]);
-        Map<String,dynamic> webRTCDesc = message.data['description'];
-        //print("webRTCDesc: " + webRTCDesc.toString());
-        this.add(CallReceived(from, webRTCDesc: webRTCDesc));
+        Map<String,dynamic> offerRecieved = message.data;
+        offerRecieved.remove('from');
+        this.add(CallReceived(from, offerRecieved: offerRecieved));
       break;
       case 'user_online':
         User user = User.fromMap(message.data["user"]);

@@ -6,7 +6,8 @@ class MainState  {
   final List<User> contact;
   final List<User> histories;
   User callingUser;
-  final Map<String, dynamic> webRTCDesc;
+
+  final Map<String, dynamic> offerRecieved;
   final bool loading;
 
   static MainState init() {
@@ -14,7 +15,7 @@ class MainState  {
   }
 
   MainState({
-    this.webRTCDesc, 
+    this.offerRecieved, 
     this.contact = const [], 
     this.histories = const [], 
     this.callingUser,
@@ -24,12 +25,12 @@ class MainState  {
   MainState copyWith({ 
     List<User> contact, 
     User callingUser,
-    Map<String, dynamic>webRTCDesc,
+    Map<String, dynamic>offerRecieved,
     bool loading,
     List<User> histories}
   ) {
     return MainState(
-      webRTCDesc: webRTCDesc==null?this.webRTCDesc:webRTCDesc,
+      offerRecieved: offerRecieved==null?this.offerRecieved:offerRecieved,
       contact: contact == null ? this.contact : contact,
       histories: histories == null ? this.histories : histories,
       callingUser: callingUser == null ? this.callingUser : callingUser,
@@ -37,9 +38,9 @@ class MainState  {
     );
   }
 
-  MainState callRecieved(User targetUser, {Map<String, dynamic> webRTCDesc}) {
+  MainState callRecieved(User targetUser, {Map<String, dynamic> offerRecieved}) {
     return this.copyWith(
-      webRTCDesc: webRTCDesc,
+      offerRecieved: offerRecieved,
       callingUser: targetUser
     );
   }

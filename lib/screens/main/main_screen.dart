@@ -14,12 +14,13 @@ import 'history_tab.dart';
 
 class MainScreen extends StatelessWidget {
 
-  void _onCallReceive(context, user) {
+  void _onCallReceive(context, user, offerRecieved) {
     print("Call received.");
     Navigator.of(context).pushNamed(AppRoutes.calling,
       arguments: {
         'bloc': MainBloc.of(context),
         'user': user,
+        'offer_recieved': offerRecieved,
         'is_request': true,
       }
     );
@@ -41,7 +42,7 @@ class MainScreen extends StatelessWidget {
                 return BlocListener<MainBloc, MainState>(
                   listener: (context, state) {
                     if ( state.callingUser != null) {
-                      _onCallReceive(context, state.callingUser);
+                      _onCallReceive(context, state.callingUser, state.offerRecieved);
                     }
                   },
                   child: Scaffold(

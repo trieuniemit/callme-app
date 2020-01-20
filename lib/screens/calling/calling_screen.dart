@@ -12,8 +12,9 @@ class CallingSceen extends StatelessWidget {
 
   final MainBloc mainBloc;
   final bool isRequest;
+  final Map<String, dynamic> offerRecieved;
 
-  const CallingSceen({this.mainBloc, this.isRequest});
+  const CallingSceen({this.offerRecieved, this.mainBloc, this.isRequest});
 
   void _onCallNotAvailable(context, String alertKey) {
     showDialog(
@@ -51,7 +52,7 @@ class CallingSceen extends StatelessWidget {
         return true;
       },
       child: BlocProvider<CallingBloc>(
-        create: (context) => CallingBloc(mainBloc: mainBloc, isRequest: isRequest),
+        create: (context) => CallingBloc(mainBloc: mainBloc, isRequest: isRequest, offerRecieved: offerRecieved),
         child:  Scaffold(
           body: Container(
             decoration: BoxDecoration(

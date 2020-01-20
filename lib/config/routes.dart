@@ -20,8 +20,9 @@ class AppRoutes {
         Map args = settings.arguments;
         return _routeConfig(CallingSceen(
           mainBloc: args['bloc'], 
-          isRequest: args['is_request'])
-        );
+          isRequest: args['is_request'],
+          offerRecieved: args['offer_recieved']
+        ));
       break;
       case home: 
       default: 

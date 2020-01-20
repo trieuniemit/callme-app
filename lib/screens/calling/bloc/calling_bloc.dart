@@ -6,7 +6,6 @@ import 'package:app.callme/services/socket_connection.dart';
 import 'package:app.callme/services/webrtc/constant.dart';
 import 'package:app.callme/services/webrtc/webrtc_service.dart';
 import 'package:bloc/bloc.dart';
-import 'package:flutter_webrtc/media_stream.dart';
 import 'package:flutter_webrtc/rtc_ice_candidate.dart';
 import 'package:flutter_webrtc/rtc_session_description.dart';
 import 'package:flutter_webrtc/rtc_video_view.dart';
@@ -17,6 +16,7 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
   
   final MainBloc mainBloc;
   final bool isRequest;
+  final Map<String, dynamic> offerRecieved;
 
   User get user => mainBloc.state.callingUser;
 
@@ -43,23 +43,16 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
   @override
   CallingState get initialState => InitialCallingState();
 
-  CallingBloc({this.isRequest = false, this.mainBloc}) {
+  CallingBloc({this.offerRecieved, this.isRequest = false, this.mainBloc}) {
     _socketSubscription = socketConn.stream.listen(_socketListener);
-
-    if(!isRequest) {
-      socketConn.emit('call_start', {'target': user.socketId});
-    }
     // init renderer
-    initRenderers();
+    _initWebRTC();
   }
 
-  void initRenderers() async {
+  void _initWebRTC() async {
     this._webRTCService = WebRTCService(
-      onCandidate: (candidate) {
-        socketConn.emit('call_candidate', {'target': user.socketId, ...candidate});
-      },
       onAddLocalStream: (stream) {
-        //localRenderer.srcObject = stream;
+        localRenderer.srcObject = stream;
         print("LocalStream ID: " + stream.id);
       },
       onAddRemoteStream: (stream) {
@@ -70,6 +63,15 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
 
     await localRenderer.initialize();
     await remoteRenderer.initialize();
+
+    if(!isRequest) {
+      var _offerSend = await this._webRTCService.createOffer(
+        sessionId: DateTime.now().millisecondsSinceEpoch.toString(),
+        media: WebRTCMedia.VIDEO, useScreen: false
+      );
+
+      socketConn.emit('call_start', {'target': user.socketId, ..._offerSend});
+    }
   }
 
   @override
@@ -111,12 +113,19 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
     } else if (event is CallAccepted  || event is UserCallAccepted) {
 
       if (event is CallAccepted) {
-        String sessionId = user.socketId;
-        this._webRTCService.createOffer(sessionId: sessionId, media: WebRTCMedia.VIDEO, useScreen: false).then((offer) {
-          socketConn.emit('call_accepted', {'target': user.socketId, ...offer});
-        });
-      } else {
+        String sessionId = offerRecieved['session_id'];
 
+        RTCSessionDescription description = RTCSessionDescription(
+          offerRecieved['description']['sdp'], 
+          offerRecieved['description']['type']
+        );
+        Map<String, dynamic> anwser = await this._webRTCService.createAnswer(
+          sessionId: sessionId, 
+          media: WebRTCMedia.VIDEO, 
+          useScreen: false,
+          remoteDesc: description
+        );
+        socketConn.emit('call_accepted', {'target': user.socketId, ...anwser});
       }
 
       _timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -124,7 +133,9 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
         String seconds = duration.inSeconds.remainder(60).toString().padLeft(2,'0');
         String mins = duration.inMinutes.remainder(60).toString().padLeft(2,'0');
         String hours = duration.inHours.toString().padLeft(2,'0');
-        _noticeCtl.sink.add("$hours:$mins:$seconds");
+        if (!_noticeCtl.isClosed) {
+          _noticeCtl.sink.add("$hours:$mins:$seconds");
+        }
       });
       
       yield CallAcceptedState();
@@ -144,39 +155,40 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
         this.add(UserCallEnded());
       break;
       case 'call_accepted':
+        String sessionId = message.data['session_id'];
+
         RTCSessionDescription description = RTCSessionDescription(
           message.data['description']['sdp'], 
           message.data['description']['type']
         );
-        await this._webRTCService.createAnswer(
-          sessionId: message.data['session_id'], 
-          media: WebRTCMedia.VIDEO, 
-          useScreen: false,
-          remoteDesc: description
-        );
-
+        this._webRTCService.setRemoteDescription(sessionId, description);
         this.add(UserCallAccepted());
+
+        List<Map<String, dynamic>> localCadidates = this._webRTCService.candidates;
+
+        socketConn.emit('call_candidate', {'target': user.socketId, 'candidates' : localCadidates, 'session_id': sessionId, 'is_request': true});
+
       break;
       case 'call_candidate':
-        Map<String,dynamic> candidateMap = message.data['candidate'];
-
-        RTCIceCandidate candidate = new RTCIceCandidate(
-          candidateMap['candidate'],
-          candidateMap['sdpMid'],
-          candidateMap['sdpMLineIndex']
-        );
-
-        this._webRTCService.addCandidate(message.data['session_id'], candidate);
+        String sessionId = message.data['session_id'];
         
-      break;
+        List listCandidates = message.data['candidates'];
 
-      case 'call_answer':
-        // RTCSessionDescription description = RTCSessionDescription(
-        //   message.data['description']['sdp'], 
-        //   message.data['description']['type']
-        // );
-        // this._webRTCService.setRemoteDescription(message.data['session_id'], description);
+        listCandidates.forEach((value) {
+          RTCIceCandidate candidate = new RTCIceCandidate(
+            value['candidate'],
+            value['sdpMid'],
+            value['sdpMLineIndex']
+          );
+          this._webRTCService.setRemoteCandidate(message.data['session_id'], candidate);
+        });
+
+        if (message.data.containsKey('is_request')) {
+          List<Map<String, dynamic>> localCadidates = this._webRTCService.candidates;
+          socketConn.emit('call_candidate', {'target': user.socketId, 'candidates' : localCadidates, 'session_id': sessionId});
+        }
       break;
+      
     }
   }
 
