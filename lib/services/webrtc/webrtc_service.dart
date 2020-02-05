@@ -1,5 +1,4 @@
 import 'package:app.callme/services/webrtc/constant.dart';
-import 'package:app.callme/services/webrtc/helper_classes.dart';
 import 'package:flutter_webrtc/webrtc.dart';
 import 'package:meta/meta.dart';
 
@@ -9,20 +8,20 @@ class WebRTCService {
   var _peerConnections = new Map<String, RTCPeerConnection>();
   var _dataChannels = new Map<String, RTCDataChannel>();
   
-  List<Map<String, dynamic>> _localCandidates = [];
-
-  List<Map<String, dynamic>> get candidates => _localCandidates;
+  List<RTCIceCandidate> _remoteCandidates = [];
 
   //final Function(Map<String, dynamic>) onSendMessage;
   final Function(MediaStream) onAddLocalStream;
   final Function(MediaStream) onAddRemoteStream;
+  final Function(Map) onCandidate;
 
   MediaStream localStream;
   List<MediaStream> remoteStreams = List();
 
   WebRTCService({
     @required this.onAddLocalStream, 
-    @required this.onAddRemoteStream
+    @required this.onAddRemoteStream,
+    @required this.onCandidate
   });
 
 
@@ -33,7 +32,7 @@ class WebRTCService {
       localStream = null;
     }
 
-    _peerConnections.forEach((key, pc) =>pc.close());
+    _peerConnections.forEach((key, pc) => pc.close());
   }
 
   // switch camera
@@ -49,8 +48,7 @@ class WebRTCService {
       'audio': true,
       'video': {
         'mandatory': {
-          'minWidth':
-              '640', // Provide your own width, height and frame rate here
+          'minWidth': '640',
           'minHeight': '480',
           'minFrameRate': '30',
         },
@@ -76,7 +74,7 @@ class WebRTCService {
     if (media != WebRTCMedia.DATA) {
       pc.addStream(localStream);
       pc.onIceCandidate = (candidate) {
-        this._localCandidates.add({
+        this.onCandidate({
           'sdpMLineIndex': candidate.sdpMlineIndex,
           'sdpMid': candidate.sdpMid,
           'candidate': candidate.candidate,
@@ -84,7 +82,9 @@ class WebRTCService {
       };
     }
 
-    pc.onIceConnectionState = (state) {};
+    pc.onIceConnectionState = (state) {
+      print("IceConnection State: $state");
+    };
 
     pc.onAddStream = (stream) {
       remoteStreams.add(stream);
@@ -153,15 +153,28 @@ class WebRTCService {
    */
   Future<Map<String, dynamic>> createAnswer({@required String sessionId, @required WebRTCMedia media, 
     @required bool useScreen, @required RTCSessionDescription remoteDesc}) async {
-    print("WebRTC: Create answer============");
+    print("WebRTC: Created answer============");
+
+    RTCPeerConnection pc = await _createPeerConnection(sessionId, media, useScreen);
+
+    if (media == WebRTCMedia.DATA) {
+      _createDataChannel(pc);
+    }
+
+    pc.setRemoteDescription(remoteDesc);
+
     try {
-      RTCPeerConnection pc = await _createPeerConnection(sessionId, media, useScreen);
-      pc.setRemoteDescription(remoteDesc);
-      
       RTCSessionDescription s = await pc.createAnswer(media == WebRTCMedia.DATA ? dataChannelConst : mediaConst);
       pc.setLocalDescription(s);
       
       _peerConnections[sessionId] = pc;
+
+      if (this._remoteCandidates.length > 0) {
+        _remoteCandidates.forEach((candidate) async {
+          await pc.addCandidate(candidate);
+        });
+        _remoteCandidates.clear();
+      }
 
       return {
         'description': {'sdp': s.sdp, 'type': s.type},
@@ -185,12 +198,12 @@ class WebRTCService {
     }
   }
 
-  void setRemoteCandidate(String sessionId, RTCIceCandidate remoteCandidates) async {
+  void setRemoteCandidate(String sessionId, RTCIceCandidate remoteCandidate) async {
     var pc = _peerConnections[sessionId];
     if (pc != null) {
-      await pc.addCandidate(remoteCandidates);
+      await pc.addCandidate(remoteCandidate);
     } else {
-      print("WebRTC: Can't set candidate, peer conn not found=======");
+      _remoteCandidates.add(remoteCandidate);
     }
   }
 

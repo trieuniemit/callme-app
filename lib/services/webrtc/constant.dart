@@ -6,7 +6,7 @@ enum WebRTCMedia {VIDEO, AUDIO, DATA}
 Map<String, dynamic> iceServers = {
   'iceServers': [
     {
-      'url': 'stun:stun.l.google.com:19302',
+      'url': 'stun:stun.ideasip.com',
       // 'username': 'change_to_real_user',
       // 'credential': 'change_to_real_secret'
     }

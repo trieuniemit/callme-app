@@ -16,6 +16,7 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
   
   final MainBloc mainBloc;
   final bool isRequest;
+  String _sessionId;
   final Map<String, dynamic> offerRecieved;
 
   User get user => mainBloc.state.callingUser;
@@ -56,21 +57,30 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
         print("LocalStream ID: " + stream.id);
       },
       onAddRemoteStream: (stream) {
-        localRenderer.srcObject = stream;
+        remoteRenderer.srcObject = stream;
         print("RemoteStream ID: " + stream.id);
       },
+      onCandidate: (candidate) {
+        socketConn.emit('call_candidate', {
+          'target': user.socketId, 
+          'candidate' : candidate
+        });
+      }
     );
 
     await localRenderer.initialize();
     await remoteRenderer.initialize();
 
     if(!isRequest) {
+      _sessionId = DateTime.now().millisecondsSinceEpoch.toString();
       var _offerSend = await this._webRTCService.createOffer(
-        sessionId: DateTime.now().millisecondsSinceEpoch.toString(),
+        sessionId: _sessionId,
         media: WebRTCMedia.VIDEO, useScreen: false
       );
 
       socketConn.emit('call_start', {'target': user.socketId, ..._offerSend});
+    } else {
+       _sessionId = offerRecieved['session_id'];
     }
   }
 
@@ -113,14 +123,12 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
     } else if (event is CallAccepted  || event is UserCallAccepted) {
 
       if (event is CallAccepted) {
-        String sessionId = offerRecieved['session_id'];
-
         RTCSessionDescription description = RTCSessionDescription(
           offerRecieved['description']['sdp'], 
           offerRecieved['description']['type']
         );
         Map<String, dynamic> anwser = await this._webRTCService.createAnswer(
-          sessionId: sessionId, 
+          sessionId: _sessionId, 
           media: WebRTCMedia.VIDEO, 
           useScreen: false,
           remoteDesc: description
@@ -155,38 +163,23 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
         this.add(UserCallEnded());
       break;
       case 'call_accepted':
-        String sessionId = message.data['session_id'];
-
         RTCSessionDescription description = RTCSessionDescription(
           message.data['description']['sdp'], 
           message.data['description']['type']
         );
-        this._webRTCService.setRemoteDescription(sessionId, description);
+        this._webRTCService.setRemoteDescription(_sessionId, description);
         this.add(UserCallAccepted());
-
-        List<Map<String, dynamic>> localCadidates = this._webRTCService.candidates;
-
-        socketConn.emit('call_candidate', {'target': user.socketId, 'candidates' : localCadidates, 'session_id': sessionId, 'is_request': true});
 
       break;
       case 'call_candidate':
-        String sessionId = message.data['session_id'];
-        
-        List listCandidates = message.data['candidates'];
+        Map<String, dynamic> candidate = message.data['candidate'];
 
-        listCandidates.forEach((value) {
-          RTCIceCandidate candidate = new RTCIceCandidate(
-            value['candidate'],
-            value['sdpMid'],
-            value['sdpMLineIndex']
-          );
-          this._webRTCService.setRemoteCandidate(message.data['session_id'], candidate);
-        });
-
-        if (message.data.containsKey('is_request')) {
-          List<Map<String, dynamic>> localCadidates = this._webRTCService.candidates;
-          socketConn.emit('call_candidate', {'target': user.socketId, 'candidates' : localCadidates, 'session_id': sessionId});
-        }
+        RTCIceCandidate candidateObj = new RTCIceCandidate(
+          candidate['candidate'],
+          candidate['sdpMid'],
+          candidate['sdpMLineIndex']
+        );
+        this._webRTCService.setRemoteCandidate(_sessionId, candidateObj);
       break;
       
     }
