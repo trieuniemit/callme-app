@@ -6,6 +6,7 @@ import 'package:app.callme/services/socket_connection.dart';
 import 'package:app.callme/services/webrtc/constant.dart';
 import 'package:app.callme/services/webrtc/webrtc_service.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_webrtc/rtc_ice_candidate.dart';
 import 'package:flutter_webrtc/rtc_session_description.dart';
 import 'package:flutter_webrtc/rtc_video_view.dart';
@@ -33,7 +34,7 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
 
   //Render
   RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
-  RTCVideoRenderer localRenderer = RTCVideoRenderer();
+  RTCVideoRenderer mainRenderer = RTCVideoRenderer();
 
 
   static CallingBloc of(context) {
@@ -53,7 +54,7 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
   void _initWebRTC() async {
     this._webRTCService = WebRTCService(
       onAddLocalStream: (stream) {
-        localRenderer.srcObject = stream;
+        mainRenderer.srcObject = stream;
         print("LocalStream ID: " + stream.id);
       },
       onAddRemoteStream: (stream) {
@@ -65,10 +66,11 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
           'target': user.socketId, 
           'candidate' : candidate
         });
-      }
+      },
+      videoSize: Size(360, 640)
     );
 
-    await localRenderer.initialize();
+    await mainRenderer.initialize();
     await remoteRenderer.initialize();
 
     if(!isRequest) {
@@ -94,17 +96,17 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
       _timer.cancel();
     }
 
-    localRenderer.srcObject = null;
+    mainRenderer.srcObject = null;
     remoteRenderer.srcObject = null;
-    await localRenderer.dispose();
+    await mainRenderer.dispose();
     await remoteRenderer.dispose();
   }
 
   @override
   Stream<CallingState> mapEventToState(CallingEvent event) async* {
     if (event is CallNotAvailable) {
-      await Future.delayed(Duration(seconds: 2));
-      yield CallNotAvailableState();
+      //await Future.delayed(Duration(seconds: 2));
+      //yield CallNotAvailableState();
 
     } else if (event is CallTargetBusy) {
       await Future.delayed(Duration(seconds: 2));

@@ -1,4 +1,5 @@
 import 'package:app.callme/services/webrtc/constant.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_webrtc/webrtc.dart';
 import 'package:meta/meta.dart';
 
@@ -14,6 +15,7 @@ class WebRTCService {
   final Function(MediaStream) onAddLocalStream;
   final Function(MediaStream) onAddRemoteStream;
   final Function(Map) onCandidate;
+  final Size videoSize;
 
   MediaStream localStream;
   List<MediaStream> remoteStreams = List();
@@ -21,7 +23,8 @@ class WebRTCService {
   WebRTCService({
     @required this.onAddLocalStream, 
     @required this.onAddRemoteStream,
-    @required this.onCandidate
+    @required this.onCandidate,
+    @required this.videoSize
   });
 
 
@@ -48,11 +51,11 @@ class WebRTCService {
       'audio': true,
       'video': {
         'mandatory': {
-          'minWidth': '640',
-          'minHeight': '480',
+          'minWidth': videoSize.width,
+          'minHeight': videoSize.height,
           'minFrameRate': '30',
         },
-        'facingMode': 'user',
+        'facingMode': 'environment', // user
         'optional': [],
       }
     };

@@ -5,11 +5,11 @@ enum WebRTCMedia {VIDEO, AUDIO, DATA}
 // setup iceServers
 Map<String, dynamic> iceServers = {
   'iceServers': [
-    {
-      'url': 'stun:stun.ideasip.com',
-      // 'username': 'change_to_real_user',
-      // 'credential': 'change_to_real_secret'
-    }
+    // {
+    //   'url': 'stun:stun.ideasip.com',
+    //   // 'username': 'change_to_real_user',
+    //   // 'credential': 'change_to_real_secret'
+    // }
   ]
 };
 
