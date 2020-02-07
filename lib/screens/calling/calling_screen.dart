@@ -13,6 +13,7 @@ class CallingSceen extends StatelessWidget {
   final MainBloc mainBloc;
   final bool isRequest;
   final Map<String, dynamic> offerRecieved;
+  final double _minWithVideoRenderer = 480;
 
   const CallingSceen({this.offerRecieved, this.mainBloc, this.isRequest});
 
@@ -46,13 +47,23 @@ class CallingSceen extends StatelessWidget {
   Widget build(BuildContext context) {
 
     FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
+    Size screenSize = MediaQuery.of(context).size;
+    double screenRatio = screenSize.width/screenSize.height;
 
     return WillPopScope(
       onWillPop: () async {
         return true;
       },
       child: BlocProvider<CallingBloc>(
-        create: (context) => CallingBloc(mainBloc: mainBloc, isRequest: isRequest, offerRecieved: offerRecieved),
+        create: (context) => CallingBloc(
+          mainBloc: mainBloc, 
+          isRequest: isRequest, 
+          offerRecieved: offerRecieved,
+          videoSize: Size(
+            _minWithVideoRenderer,
+            _minWithVideoRenderer*screenRatio
+          )
+        ),
         child:  Scaffold(
           body: BlocListener<CallingBloc, CallingState>(
             listener: (context, state) {

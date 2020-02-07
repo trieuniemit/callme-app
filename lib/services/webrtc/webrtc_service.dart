@@ -51,8 +51,8 @@ class WebRTCService {
       'audio': true,
       'video': {
         'mandatory': {
-          'minWidth': videoSize.width,
-          'minHeight': videoSize.height,
+          'minWidth': videoSize.width.toInt().toString(),
+          'minHeight': videoSize.height.toInt().toString(),
           'minFrameRate': '30',
         },
         'facingMode': 'environment', // user

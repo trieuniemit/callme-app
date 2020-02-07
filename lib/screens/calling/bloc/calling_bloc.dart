@@ -28,6 +28,7 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
   WebRTCService _webRTCService;
 
   Timer _timer;
+  final Size videoSize;
 
   SocketConnection get socketConn => mainBloc.socketConnection;
   Stream<String> get noticeStream => _noticeCtl.stream;
@@ -45,7 +46,7 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
   @override
   CallingState get initialState => InitialCallingState();
 
-  CallingBloc({this.offerRecieved, this.isRequest = false, this.mainBloc}) {
+  CallingBloc({this.offerRecieved, this.isRequest = false, this.mainBloc, this.videoSize = const Size(640, 460)}) {
     _socketSubscription = socketConn.stream.listen(_socketListener);
     // init renderer
     _initWebRTC();
@@ -67,7 +68,7 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
           'candidate' : candidate
         });
       },
-      videoSize: Size(360, 640)
+      videoSize: videoSize
     );
 
     await mainRenderer.initialize();
