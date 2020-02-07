@@ -17,6 +17,8 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
   
   final MainBloc mainBloc;
   final bool isRequest;
+  bool _callNotAvailable = false;
+
   String _sessionId;
   final Map<String, dynamic> offerRecieved;
 
@@ -63,10 +65,12 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
         print("RemoteStream ID: " + stream.id);
       },
       onCandidate: (candidate) {
-        socketConn.emit('call_candidate', {
-          'target': user.socketId, 
-          'candidate' : candidate
-        });
+        if (!_callNotAvailable) {
+          socketConn.emit('call_candidate', {
+            'target': user.socketId, 
+            'candidate' : candidate
+          });
+        }
       },
       videoSize: videoSize
     );
@@ -106,8 +110,9 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
   @override
   Stream<CallingState> mapEventToState(CallingEvent event) async* {
     if (event is CallNotAvailable) {
-      //await Future.delayed(Duration(seconds: 2));
-      //yield CallNotAvailableState();
+      await Future.delayed(Duration(seconds: 2));
+      yield CallNotAvailableState();
+      _callNotAvailable = true;
 
     } else if (event is CallTargetBusy) {
       await Future.delayed(Duration(seconds: 2));

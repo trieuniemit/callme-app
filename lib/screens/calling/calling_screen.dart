@@ -113,19 +113,19 @@ class CallingSceen extends StatelessWidget {
                 return Stack(
                   children: [
                     Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("assets/images/calling_bg.jpg"),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    !isRequest? Container(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
                       color: Colors.black,
                       child: RTCVideoView(CallingBloc.of(context).mainRenderer),
-                    ),
-                    // Container(
-                    //   decoration: BoxDecoration(
-                    //     image: DecorationImage(
-                    //       image: AssetImage("assets/images/calling_bg.jpg"),
-                    //       fit: BoxFit.cover,
-                    //     ),
-                    //   ),
-                    // ),
+                    ) : Container(),
                     Container(
                       color: Colors.black.withOpacity(0.4),
                       child: SafeArea(
