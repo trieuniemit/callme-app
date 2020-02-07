@@ -15,7 +15,7 @@ class WebRTCService {
   final Function(MediaStream) onAddLocalStream;
   final Function(MediaStream) onAddRemoteStream;
   final Function(Map) onCandidate;
-  final Size videoSize;
+  final Function(RTCIceConnectionState) onStateChange;
 
   MediaStream localStream;
   List<MediaStream> remoteStreams = List();
@@ -24,7 +24,7 @@ class WebRTCService {
     @required this.onAddLocalStream, 
     @required this.onAddRemoteStream,
     @required this.onCandidate,
-    @required this.videoSize
+    @required this.onStateChange
   });
 
 
@@ -34,6 +34,8 @@ class WebRTCService {
       localStream.dispose();
       localStream = null;
     }
+
+    remoteStreams.clear();
 
     _peerConnections.forEach((key, pc) => pc.close());
   }
@@ -51,8 +53,8 @@ class WebRTCService {
       'audio': true,
       'video': {
         'mandatory': {
-          'minWidth': videoSize.width.toInt().toString(),
-          'minHeight': videoSize.height.toInt().toString(),
+          'minWidth': '640',
+          'minHeight': '480',
           'minFrameRate': '30',
         },
         'facingMode': 'environment', // user
@@ -85,8 +87,9 @@ class WebRTCService {
       };
     }
 
-    pc.onIceConnectionState = (state) {
+    pc.onIceConnectionState = (RTCIceConnectionState  state) {
       print("IceConnection State: $state");
+      this.onStateChange(state);
     };
 
     pc.onAddStream = (stream) {

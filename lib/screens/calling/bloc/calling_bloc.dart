@@ -4,13 +4,14 @@ import 'package:app.callme/models/user_model.dart';
 import 'package:app.callme/screens/main/bloc/bloc.dart';
 import 'package:app.callme/services/socket_connection.dart';
 import 'package:app.callme/services/webrtc/constant.dart';
+import 'package:app.callme/services/webrtc/video_view.dart';
 import 'package:app.callme/services/webrtc/webrtc_service.dart';
 import 'package:bloc/bloc.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter_webrtc/enums.dart';
 import 'package:flutter_webrtc/rtc_ice_candidate.dart';
 import 'package:flutter_webrtc/rtc_session_description.dart';
-import 'package:flutter_webrtc/rtc_video_view.dart';
 import 'package:provider/provider.dart';
+import 'package:wakelock/wakelock.dart';
 import './bloc.dart';
 
 class CallingBloc extends Bloc<CallingEvent, CallingState> {
@@ -18,11 +19,12 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
   final MainBloc mainBloc;
   final bool isRequest;
   bool _callNotAvailable = false;
+  
+  StreamController<bool> _showInfoStreamCtl = StreamController();
 
   String _sessionId;
   final Map<String, dynamic> offerRecieved;
 
-  User get user => mainBloc.state.callingUser;
 
   StreamSubscription<SocketMessage> _socketSubscription;
   StreamController<String> _noticeCtl = StreamController();
@@ -30,13 +32,14 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
   WebRTCService _webRTCService;
 
   Timer _timer;
-  final Size videoSize;
 
   SocketConnection get socketConn => mainBloc.socketConnection;
   Stream<String> get noticeStream => _noticeCtl.stream;
+  User get user => mainBloc.state.callingUser;
+  Stream<bool> get showInfoStream => _showInfoStreamCtl.stream;
 
   //Render
-  RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
+  RTCVideoRenderer secondRenderer = RTCVideoRenderer();
   RTCVideoRenderer mainRenderer = RTCVideoRenderer();
 
 
@@ -48,10 +51,11 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
   @override
   CallingState get initialState => InitialCallingState();
 
-  CallingBloc({this.offerRecieved, this.isRequest = false, this.mainBloc, this.videoSize = const Size(640, 460)}) {
+  CallingBloc({this.offerRecieved = const {}, this.isRequest = false, this.mainBloc}) {
     _socketSubscription = socketConn.stream.listen(_socketListener);
     // init renderer
     _initWebRTC();
+    Wakelock.enable();
   }
 
   void _initWebRTC() async {
@@ -59,9 +63,16 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
       onAddLocalStream: (stream) {
         mainRenderer.srcObject = stream;
         print("LocalStream ID: " + stream.id);
+        try {
+        _webRTCService.switchCamera();
+        } catch(_) {
+          print('WebRTC: Error when switch camera=====');
+        }
       },
-      onAddRemoteStream: (stream) {
-        remoteRenderer.srcObject = stream;
+      onAddRemoteStream: (stream) async {
+        mainRenderer.srcObject = stream;
+        secondRenderer.srcObject = _webRTCService.localStream;
+        
         print("RemoteStream ID: " + stream.id);
       },
       onCandidate: (candidate) {
@@ -72,11 +83,25 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
           });
         }
       },
-      videoSize: videoSize
+      onStateChange: (state) {
+        switch(state) {
+          case RTCIceConnectionState.RTCIceConnectionStateConnected:
+            
+            break;
+          case RTCIceConnectionState.RTCIceConnectionStateFailed:
+            
+            break;
+          case RTCIceConnectionState.RTCIceConnectionStateDisconnected:
+            
+            break;
+
+          default:
+        }
+      }
     );
 
     await mainRenderer.initialize();
-    await remoteRenderer.initialize();
+    await secondRenderer.initialize();
 
     if(!isRequest) {
       _sessionId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -86,7 +111,7 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
       );
 
       socketConn.emit('call_start', {'target': user.socketId, ..._offerSend});
-    } else {
+    } else if(offerRecieved != null) {
        _sessionId = offerRecieved['session_id'];
     }
   }
@@ -102,9 +127,12 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
     }
 
     mainRenderer.srcObject = null;
-    remoteRenderer.srcObject = null;
+    secondRenderer.srcObject = null;
     await mainRenderer.dispose();
-    await remoteRenderer.dispose();
+    await secondRenderer.dispose();
+    _webRTCService.close();
+    
+    Wakelock.disable();
   }
 
   @override
@@ -123,7 +151,6 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
         socketConn.emit('call_end', {'target': user.socketId});
       }
       yield CallEndedState();
-      
     } else if (event is CallBusy) {
       socketConn.emit('call_busy', {'target': user.socketId});
       yield CallBusyState();
@@ -155,7 +182,6 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
       });
       
       yield CallAcceptedState();
-
     }
   }
 
