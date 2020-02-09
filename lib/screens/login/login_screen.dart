@@ -13,7 +13,7 @@ import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 class LoginScreen extends StatelessWidget {
 
-  final TextEditingController usernameCtrl = TextEditingController(text: 'trieuniemit@gmail.com');
+  final TextEditingController usernameCtrl = TextEditingController(text: 'trieuniemit');
   final TextEditingController passwordCtrl = TextEditingController(text: '123456');
 
   void _signIn(context) async {

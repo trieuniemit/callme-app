@@ -89,7 +89,7 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
             
             break;
           case RTCIceConnectionState.RTCIceConnectionStateFailed:
-            
+            this.add(CallEnded());
             break;
           case RTCIceConnectionState.RTCIceConnectionStateDisconnected:
             
