@@ -15,15 +15,16 @@ class AppRepository {
     
     await Future.delayed(Duration(seconds: 1));
 
-    return await ApiService.request(
-      method: ApiService.POST,
+    Map res = await ApiService.request(
+      method: Request.POST,
       path: Constants.LOGIN,
       params: {
         "password": password,
         "username": username
       }
     );
-  
+    
+    return Map<String, dynamic>.from(res);
   }
 
   Future<void> deleteToken() async {
