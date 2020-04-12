@@ -13,11 +13,15 @@ import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 class LoginScreen extends StatelessWidget {
 
-  final TextEditingController usernameCtrl = TextEditingController(text: 'trieuniemit');
+  final TextEditingController usernameCtrl = TextEditingController(text: '0395710844');
   final TextEditingController passwordCtrl = TextEditingController(text: '123456');
 
   void _signIn(context) async {
     LoginBloc.of(context).add(LoginButtonPressed(usernameCtrl.text, passwordCtrl.text));
+  }
+  
+  void _openRegisterScreen(context) {
+    Navigator.of(context).pushNamed(AppRoutes.register);
   }
 
   @override
@@ -56,9 +60,10 @@ class LoginScreen extends StatelessWidget {
                         width: 200,
                       ),
                       TextFormField(
-                          controller: usernameCtrl,
-                          decoration: InputDecoration(
-                          hintText: AppLg.of(context).trans('username')
+                        controller: usernameCtrl,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: AppLg.of(context).trans('phone_number')
                         ),
                       ),
                       TextFormField(
@@ -83,6 +88,20 @@ class LoginScreen extends StatelessWidget {
                             Text(AppLg.of(context).trans('login'), style: TextStyle(color: Colors.white))
                           ]
                         ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(AppLg.of(context).trans('dont_have_account')),
+                            SizedBox(width: 10),
+                            InkWell(
+                              onTap: () => _openRegisterScreen(context),
+                              child: Text(AppLg.of(context).trans('register'), style: TextStyle(color: Colors.blue)),
+                            )
+                          ],
+                        )
                       )
                     ],
                   )

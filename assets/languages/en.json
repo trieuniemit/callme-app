@@ -3,7 +3,7 @@
     "history": "History",
     "contact": "Contact",
     "login": "Login",
-    "username": "Username",
+    "phone_number": "Phone number",
     "password": "Password",
     "loading": "Loading...",
     "logging_in": "Logging in...",
@@ -13,5 +13,7 @@
     "call_target_busy": "The user you are calling is busy.",
     "error": "Error!",
     "ringing": "Ringing...",
-    "calling": "Calling you..."
+    "calling": "Calling you...",
+    "dont_have_account": "Don't have an account yet?",
+    "register": "Register now"
 }
