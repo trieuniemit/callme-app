@@ -16,4 +16,14 @@ class RegisterButtonPressed extends RegisterEvent {
   
   @override
   List<Object> get props => [phoneNumber, password, confirmPassword, fullname];
+  
+  
+  Map<String, dynamic> toMap() {
+    return {
+      'phoneNumber': phoneNumber,
+      'fullname': fullname,
+      'password': password,
+      'confirmPassword': confirmPassword,
+    };
+  }
 }

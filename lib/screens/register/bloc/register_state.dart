@@ -10,6 +10,8 @@ class RegisterInitial extends RegisterState { }
 
 class RegisterSuccessState extends RegisterState { }
 
+class RegisterProcessState extends RegisterState { }
+
 class RegisterFailState extends RegisterState {
   
   final String message;
@@ -19,3 +21,11 @@ class RegisterFailState extends RegisterState {
   List<Object> get props => [message];
 }
 
+class ValidateFailState extends RegisterState {
+  
+  final String message;
+  ValidateFailState(this.message);
+  
+  @override
+  List<Object> get props => [message];
+}

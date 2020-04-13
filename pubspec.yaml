@@ -44,7 +44,8 @@ dependencies:
   connectivity: ^0.4.5+4 #check connect
   wakelock: ^0.1.3+4
   flutter_statusbarcolor: ^0.2.3 #statusbar
-
+  angel_validate: ^2.0.2
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
