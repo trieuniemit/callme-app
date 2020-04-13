@@ -21,15 +21,16 @@ class AuthRepository {
   }
   
     
-  Future<Map<String, dynamic>> register({ @required String phoneNumber, @required String password }) async {
+  Future<Map<String, dynamic>> register({ @required String phoneNumber, @required String fullname, @required String password }) async {
     
     await Future.delayed(Duration(seconds: 1));
 
     Map res = await ApiService.request(
       method: Request.POST,
-      path: Constants.LOGIN,
+      path: Constants.REGISTER,
       params: {
         "password": password,
+        "fullname": fullname,
         "username": phoneNumber
       }
     );

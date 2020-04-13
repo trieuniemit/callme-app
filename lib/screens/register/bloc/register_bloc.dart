@@ -23,7 +23,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     RegisterEvent event,
   ) async* {
     if(event is RegisterButtonPressed) {
-      Map<String, dynamic> res = await _authRepository.register(phoneNumber: event.phoneNumber, password: event.password);
+      Map<String, dynamic> res = await _authRepository.register(fullname: event.fullname, phoneNumber: event.phoneNumber, password: event.password);
     }
   }
 }

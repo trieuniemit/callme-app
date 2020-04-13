@@ -50,7 +50,7 @@ class ApiService {
           uriResponse = await client.post(url, 
             body: json.encode(params), 
             headers: apiHeaders
-          );
+          ).timeout(Duration(seconds: maxRequestTime));
 
         break;
 

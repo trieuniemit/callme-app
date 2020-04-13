@@ -5,6 +5,7 @@
     "login": "Login",
     "phone_number": "Phone number",
     "password": "Password",
+    "confirm_password": "Confirm password",
     "loading": "Loading...",
     "logging_in": "Logging in...",
     "logout": "Logout",
@@ -15,5 +16,7 @@
     "ringing": "Ringing...",
     "calling": "Calling you...",
     "dont_have_account": "Don't have an account yet?",
-    "register": "Register now"
+    "register": "Register now",
+    "fullname": "Nickname",
+    "already_have_account": "Already have an account?"
 }

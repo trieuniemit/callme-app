@@ -9,10 +9,11 @@ abstract class RegisterEvent extends Equatable {
 class RegisterButtonPressed extends RegisterEvent {
   final String phoneNumber;
   final String password;
+  final String fullname;
   final String confirmPassword;
   
-  RegisterButtonPressed({this.phoneNumber, this.password, this.confirmPassword});
+  RegisterButtonPressed({this.phoneNumber, this.password, this.confirmPassword, this.fullname});
   
   @override
-  List<Object> get props => [phoneNumber, password, confirmPassword];
+  List<Object> get props => [phoneNumber, password, confirmPassword, fullname];
 }
