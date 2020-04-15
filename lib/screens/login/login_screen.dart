@@ -11,8 +11,8 @@ import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 class LoginScreen extends StatelessWidget {
 
-  final TextEditingController usernameCtrl = TextEditingController(text: '0395710844');
-  final TextEditingController passwordCtrl = TextEditingController(text: '123456');
+  final TextEditingController usernameCtrl = TextEditingController(text: '');
+  final TextEditingController passwordCtrl = TextEditingController(text: '');
 
   void _signIn(context) async {
     LoginBloc.of(context).add(LoginButtonPressed(usernameCtrl.text, passwordCtrl.text));

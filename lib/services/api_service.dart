@@ -85,18 +85,18 @@ class ApiService {
 
       if (connectivityResult == ConnectivityResult.mobile || 
         connectivityResult == ConnectivityResult.wifi) {
-          print('Error: Server!');
+          debugPrint('Error: Server!');
           return {"status": false, "key": "server_error", "message": "Server error!"};
       }
       
-      print('Error: Network!');
+      debugPrint('Error: Network!');
       return {"status": false, "key": "network_error", "message": "Network error!"};
     }
     
     client.close();
     
     debugPrint('Response: ${utf8.decode(uriResponse.bodyBytes)} \n---------------------------------\n');
-    print('${method.toUpperCase()} to API: Success!==========');
+    debugPrint('${method.toUpperCase()} to API: Success!==========');
     return json.decode(utf8.decode(uriResponse.bodyBytes));
   }
 
@@ -110,13 +110,13 @@ class ApiService {
 
       String urlUpload = "<Upload URL>";
 
-      print('Upload: Start upload to: $urlUpload');
+      debugPrint('Upload: Start upload to: $urlUpload');
     
 
       var uri = Uri.parse(urlUpload);
 
       List<String> mimeType = lookupMimeType(filePath).split('/');
-      print('Mime Type: '+mimeType.toString());
+      debugPrint('Mime Type: '+mimeType.toString());
 
 
       var request = new MultipartRequest("POST", uri);

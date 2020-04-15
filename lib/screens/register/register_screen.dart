@@ -75,7 +75,6 @@ class RegisterScreen extends StatelessWidget {
                       ),
                       TextFormField(
                         controller: fullnameCtrl,
-                        keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           hintText: AppLg.of(context).trans('fullname')
                         ),
