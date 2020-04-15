@@ -22,17 +22,5 @@ class Authenticated extends AppEvent {
   List<Object> get props => [token, user];
 }
 
-
-class LoginStart extends AppEvent {
-
-  final String username;
-  final String password;
-
-  LoginStart({this.username, this.password});
-
-  @override
-  List<Object> get props => [username, password];
-}
-
 class LogOut extends AppEvent {}
 

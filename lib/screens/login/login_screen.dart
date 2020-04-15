@@ -1,6 +1,4 @@
 import 'package:app.callme/bloc/app_bloc.dart';
-import 'package:app.callme/bloc/app_event.dart';
-import 'package:app.callme/bloc/app_state.dart';
 import 'package:app.callme/components/loading.dart';
 import 'package:app.callme/config/routes.dart';
 import 'package:app.callme/language.dart';
@@ -30,24 +28,20 @@ class LoginScreen extends StatelessWidget {
     FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
 
     return BlocProvider<LoginBloc>(
-      create: (context) => LoginBloc(),
-      child: BlocListener<AppBloc, AppState>(
+      create: (context) => LoginBloc(AppBloc.of(context)),
+      child: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
-          if (state is AuthenticatedState) {
+          if (state is LoginSuccessState) {
             Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.home, (r) => false);
-          } else if (state is LoadingState) {
+          } else if (state is LoginProcessState) {
             Loading(context).show(text: AppLg.of(context).trans('logging_in'));
           } else if (state is LoginFailState) {
             Navigator.of(context).pop();
-            LoginBloc.of(context).add(LoginFailed(state.message));
           }
         },
         child: Scaffold(
           body: BlocBuilder<LoginBloc, LoginState>(
             builder: (context, state) {
-              if (state is ValidFormState) {
-                AppBloc.of(context).add(LoginStart(username: usernameCtrl.text, password: passwordCtrl.text));
-              }
               return Container(
                 padding: EdgeInsets.only(bottom: 50, left: 50, right: 50),
                 child: Center(
@@ -74,7 +68,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 15),
-                      state is LoginScreenFailState ? Text(state.message, style: TextStyle(color: Colors.red)) : Container(),
+                      state is LoginFailState ? Text(state.message, style: TextStyle(color: Colors.red)) : Container(),
                       SizedBox(height: 30),
                       CupertinoButton(
                         color: Colors.blue,

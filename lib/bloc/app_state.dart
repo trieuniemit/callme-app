@@ -21,20 +21,10 @@ class AuthenticatedState extends AppState {
   @override
   List<Object> get props => [token, user];
 
-  // @override 
-  // String toString() {
-  //   return "AuthenticatedState {user: ${user.toMap()}, token: $token}";
-  // }
-}
-
-
-class LoginFailState extends AppState {
-  final String message;
-
-  LoginFailState(this.message);
-  
-  @override
-  List<Object> get props => [message];
+  @override 
+  String toString() {
+    return "AuthenticatedState {user: ${user.toMap()}, token: $token}";
+  }
 }
 
 class UnauthenticatedState extends AppState {}
