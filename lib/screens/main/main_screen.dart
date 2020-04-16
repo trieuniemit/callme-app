@@ -17,12 +17,7 @@ class MainScreen extends StatelessWidget {
   void _onCallReceive(context, user, offerRecieved) {
     print("Call received.");
     Navigator.of(context).pushNamed(AppRoutes.calling,
-      arguments: {
-        'bloc': MainBloc.of(context),
-        'user': user,
-        'offer_recieved': offerRecieved,
-        'is_request': true,
-      }
+      arguments: {'user': user}
     );
   }
 
@@ -32,7 +27,7 @@ class MainScreen extends StatelessWidget {
     FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
 
     return DefaultTabController(
-      length: 1,
+      length: 2,
       child: BlocBuilder<AppBloc, AppState>(
         builder: (context, appState) {
           return BlocProvider<MainBloc>(
@@ -59,23 +54,22 @@ class MainScreen extends StatelessWidget {
                     body: RoundedContainer(
                       child: Column(
                         children: <Widget>[
-                          // TabBar(
-                          //   tabs: <Widget>[
-                          //     Tab(child: Text(AppLg.of(context).trans('history'))),
-                          //     Tab(child: Text(AppLg.of(context).trans('contact')))
-                          //   ],
-                          // ),
+                          TabBar(
+                            tabs: <Widget>[
+                              Tab(child: Text(AppLg.of(context).trans('history'))),
+                              Tab(child: Text(AppLg.of(context).trans('contact')))
+                            ],
+                          ),
                           Container(
-                            // color: Colors.grey,
-                            margin: EdgeInsets.only(top: 10),
-                            // height: 0.5,
+                            color: Colors.grey,
+                            height: 0.5,
                           ),
                           Expanded(
                             child: ScrollConfiguration(
                               behavior: NoScrollBehavior(),
                               child: TabBarView(
                                 children: <Widget>[
-                                  // HistoryTab(),
+                                  HistoryTab(),
                                   ContactTab()
                                 ],
                               )

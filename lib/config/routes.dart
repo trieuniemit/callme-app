@@ -1,4 +1,5 @@
 import 'package:app.callme/screens/calling/calling_screen.dart';
+import 'package:app.callme/screens/calling/receive/call_receive_screen.dart';
 import 'package:app.callme/screens/login/login_screen.dart';
 import 'package:app.callme/screens/register/register_screen.dart';
 import 'package:app.callme/screens/splash_screen.dart';
@@ -22,10 +23,8 @@ class AppRoutes {
         return _routeConfig(RegisterScreen());
       case calling: 
         Map args = settings.arguments;
-        return _routeConfig(CallingSceen(
-          mainBloc: args['bloc'], 
-          isRequest: args['is_request'],
-          offerRecieved: args['offer_recieved']
+        return _routeConfig(CallReceiveScreen(
+          callingUser: args['user']
         ));
       break;
       case home: 
