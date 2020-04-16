@@ -157,6 +157,7 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
     } else if (event is CallAccepted  || event is UserCallAccepted) {
 
       if (event is CallAccepted) {
+        print(offerRecieved);
         RTCSessionDescription description = RTCSessionDescription(
           offerRecieved['description']['sdp'], 
           offerRecieved['description']['type']
