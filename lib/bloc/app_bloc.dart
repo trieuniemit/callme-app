@@ -27,14 +27,17 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
       yield *_appStarted(appRepository, event);
       
-    } else if(event is LoginStart) {
-
-      yield *_loginStart(appRepository, event);
-
     } else if (event is LogOut) {
 
       yield *_loggedOut(appRepository, event);
 
+    } else if(event is Authenticated) {
+
+      yield AuthenticatedState(
+        token: event.token,
+        user: event.user
+      );
+      
     }
   }
 }
@@ -53,32 +56,6 @@ Stream<AppState> _appStarted(appRepository, AppStarted event) async* {
     yield UnauthenticatedState();
   }
 
-}
-
-
-Stream<AppState> _loginStart(appRepository, LoginStart event) async* {
-
-  yield LoadingState();
-
-  Map<String, dynamic> res = await appRepository.authenticate(
-    password: event.password,
-    username: event.username
-  );
-
-  if (res.containsKey('status') && res['status']) {
-
-    User user =  User.fromMap(res['user']);
-
-    await appRepository.saveToken(user, res['token']);
-
-    yield AuthenticatedState(
-      token: res['token'],
-      user: user
-    );
-
-  } else {
-    yield LoginFailState(res['message']);
-  }
 }
 
 

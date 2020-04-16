@@ -1,6 +1,4 @@
 import 'package:app.callme/bloc/app_bloc.dart';
-import 'package:app.callme/bloc/app_event.dart';
-import 'package:app.callme/bloc/app_state.dart';
 import 'package:app.callme/components/loading.dart';
 import 'package:app.callme/config/routes.dart';
 import 'package:app.callme/language.dart';
@@ -13,11 +11,15 @@ import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 class LoginScreen extends StatelessWidget {
 
-  final TextEditingController usernameCtrl = TextEditingController(text: 'trieuniemit');
-  final TextEditingController passwordCtrl = TextEditingController(text: '123456');
+  final TextEditingController usernameCtrl = TextEditingController(text: '');
+  final TextEditingController passwordCtrl = TextEditingController(text: '');
 
   void _signIn(context) async {
     LoginBloc.of(context).add(LoginButtonPressed(usernameCtrl.text, passwordCtrl.text));
+  }
+  
+  void _openRegisterScreen(context) {
+    Navigator.of(context).pushNamed(AppRoutes.register);
   }
 
   @override
@@ -26,24 +28,20 @@ class LoginScreen extends StatelessWidget {
     FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
 
     return BlocProvider<LoginBloc>(
-      create: (context) => LoginBloc(),
-      child: BlocListener<AppBloc, AppState>(
+      create: (context) => LoginBloc(AppBloc.of(context)),
+      child: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
-          if (state is AuthenticatedState) {
+          if (state is LoginSuccessState) {
             Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.home, (r) => false);
-          } else if (state is LoadingState) {
+          } else if (state is LoginProcessState) {
             Loading(context).show(text: AppLg.of(context).trans('logging_in'));
           } else if (state is LoginFailState) {
             Navigator.of(context).pop();
-            LoginBloc.of(context).add(LoginFailed(state.message));
           }
         },
         child: Scaffold(
           body: BlocBuilder<LoginBloc, LoginState>(
             builder: (context, state) {
-              if (state is ValidFormState) {
-                AppBloc.of(context).add(LoginStart(username: usernameCtrl.text, password: passwordCtrl.text));
-              }
               return Container(
                 padding: EdgeInsets.only(bottom: 50, left: 50, right: 50),
                 child: Center(
@@ -56,9 +54,10 @@ class LoginScreen extends StatelessWidget {
                         width: 200,
                       ),
                       TextFormField(
-                          controller: usernameCtrl,
-                          decoration: InputDecoration(
-                          hintText: AppLg.of(context).trans('username')
+                        controller: usernameCtrl,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: AppLg.of(context).trans('phone_number')
                         ),
                       ),
                       TextFormField(
@@ -69,7 +68,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 15),
-                      state is LoginScreenFailState ? Text(state.message, style: TextStyle(color: Colors.red)) : Container(),
+                      state is LoginFailState ? Text(state.message, style: TextStyle(color: Colors.red)) : Container(),
                       SizedBox(height: 30),
                       CupertinoButton(
                         color: Colors.blue,
@@ -83,6 +82,20 @@ class LoginScreen extends StatelessWidget {
                             Text(AppLg.of(context).trans('login'), style: TextStyle(color: Colors.white))
                           ]
                         ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(AppLg.of(context).trans('dont_have_account')),
+                            SizedBox(width: 10),
+                            InkWell(
+                              onTap: () => _openRegisterScreen(context),
+                              child: Text(AppLg.of(context).trans('register'), style: TextStyle(color: Colors.blue)),
+                            )
+                          ],
+                        )
                       )
                     ],
                   )

@@ -3,8 +3,9 @@
     "history": "History",
     "contact": "Contact",
     "login": "Login",
-    "username": "Username",
+    "phone_number": "Phone number",
     "password": "Password",
+    "confirm_password": "Confirm password",
     "loading": "Loading...",
     "logging_in": "Logging in...",
     "logout": "Logout",
@@ -12,6 +13,18 @@
     "call_not_available": "User you are calling is not reachable.",
     "call_target_busy": "The user you are calling is busy.",
     "error": "Error!",
+    "close": "Close",
     "ringing": "Ringing...",
-    "calling": "Calling you..."
+    "calling": "Calling you...",
+    "dont_have_account": "Don't have an account yet?",
+    "register": "Register now",
+    "signing_up": "Signing up...",
+    "fullname": "Nickname",
+    "already_have_account": "Already have an account?",
+    "register_validate.phoneNumber": "The Phone number is empty!",
+    "register_validate.password": "The Password is empty!",
+    "register_validate.confirm_password": "The Confirm password is empty!",
+    "register_validate.fullname": "The Nickname is empty!",
+    "register_validate.password_not_equal": "The Confirm password is not equal to password!"
+
 }

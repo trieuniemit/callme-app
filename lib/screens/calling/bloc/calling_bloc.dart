@@ -72,7 +72,6 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
       onAddRemoteStream: (stream) async {
         mainRenderer.srcObject = stream;
         secondRenderer.srcObject = _webRTCService.localStream;
-        
         print("RemoteStream ID: " + stream.id);
       },
       onCandidate: (candidate) {
@@ -102,7 +101,7 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
 
     await mainRenderer.initialize();
     await secondRenderer.initialize();
-
+    
     if(!isRequest) {
       _sessionId = DateTime.now().millisecondsSinceEpoch.toString();
       var _offerSend = await this._webRTCService.createOffer(
@@ -158,6 +157,7 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
     } else if (event is CallAccepted  || event is UserCallAccepted) {
 
       if (event is CallAccepted) {
+        print(offerRecieved);
         RTCSessionDescription description = RTCSessionDescription(
           offerRecieved['description']['sdp'], 
           offerRecieved['description']['type']
@@ -180,6 +180,8 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
           _noticeCtl.sink.add("$hours:$mins:$seconds");
         }
       });
+
+      secondRenderer.mirror = !secondRenderer.mirror;
       
       yield CallAcceptedState();
     }

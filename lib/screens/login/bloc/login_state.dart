@@ -13,11 +13,15 @@ class InvalidFormState extends LoginState {}
 
 class ValidFormState extends LoginState {}
 
-class LoginScreenFailState extends LoginState {
+class LoginFailState extends LoginState {
   final String message;
 
-  LoginScreenFailState(this.message);
+  LoginFailState(this.message);
 
   @override
   List<Object> get props => [message];
 }
+
+class LoginSuccessState extends LoginState { }
+
+class LoginProcessState extends LoginState { }

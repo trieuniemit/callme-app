@@ -12,15 +12,18 @@ import 'package:app.callme/config/constants.dart';
 
 typedef void OnUploadProgressCallback(int sentBytes, int totalBytes);
 
+class Request {
+    static const GET = 'GET';
+    static const POST = 'POST';
+    static const PUT = 'PUT';
+    static const DELETE = 'DELETE';
+}
 
 class ApiService {
 
-  static const GET = 'GET';
-  static const POST = 'POST';
-  static const PUT = 'PUT';
-  static const DELETE = 'DELETE';
-
-  static  Map<String, String> defaultHeaders = {"Content-Type": "application/json"};
+  static Map<String, String> defaultHeaders = {"Content-Type": "application/json"};
+  
+  static int maxRequestTime = 30;
 
   static Future<Map> request({ String method = 'GET', String path = '', Map<String, dynamic> params, Map<String, String> apiHeaders}) async {
     
@@ -34,8 +37,6 @@ class ApiService {
     //add cookie
     // apiHeaders.addAll({"cookie": cookies});
 
-    method = method.toLowerCase();
-
     var uriResponse;
     debugPrint('${method.toUpperCase()} to: $url\n------------------------------------------------');
     debugPrint('body: '+params.toString());
@@ -45,35 +46,35 @@ class ApiService {
       
       switch(method) {
         //post method
-        case 'post': 
+        case Request.POST: 
           uriResponse = await client.post(url, 
             body: json.encode(params), 
             headers: apiHeaders
-          ).timeout(Duration(seconds: 15));
+          ).timeout(Duration(seconds: maxRequestTime));
 
         break;
 
         //get method
-        case 'get': 
+        case Request.GET: 
           uriResponse = await client.get(url,
             headers: apiHeaders,
-          ).timeout(Duration(seconds: 15));
+          ).timeout(Duration(seconds: maxRequestTime));
 
         break;
 
         //put method
-        case 'put':
+        case Request.PUT:
           uriResponse = await client.put(url, 
             body: json.encode(params), 
             headers: apiHeaders
-          ).timeout(Duration(seconds: 15));
+          ).timeout(Duration(seconds: maxRequestTime));
         break;
 
-          //put method
-        case 'delete':
+        //put method
+        case Request.DELETE:
           uriResponse = await client.delete(url, 
             headers: apiHeaders
-          ).timeout(Duration(seconds: 15));
+          ).timeout(Duration(seconds: maxRequestTime));
         break;
       }
 
@@ -84,18 +85,18 @@ class ApiService {
 
       if (connectivityResult == ConnectivityResult.mobile || 
         connectivityResult == ConnectivityResult.wifi) {
-          print('Error: Server!');
+          debugPrint('Error: Server!');
           return {"status": false, "key": "server_error", "message": "Server error!"};
       }
       
-      print('Error: Network!');
+      debugPrint('Error: Network!');
       return {"status": false, "key": "network_error", "message": "Network error!"};
     }
     
     client.close();
     
     debugPrint('Response: ${utf8.decode(uriResponse.bodyBytes)} \n---------------------------------\n');
-    print('${method.toUpperCase()} to API: Success!==========');
+    debugPrint('${method.toUpperCase()} to API: Success!==========');
     return json.decode(utf8.decode(uriResponse.bodyBytes));
   }
 
@@ -109,13 +110,13 @@ class ApiService {
 
       String urlUpload = "<Upload URL>";
 
-      print('Upload: Start upload to: $urlUpload');
+      debugPrint('Upload: Start upload to: $urlUpload');
     
 
       var uri = Uri.parse(urlUpload);
 
       List<String> mimeType = lookupMimeType(filePath).split('/');
-      print('Mime Type: '+mimeType.toString());
+      debugPrint('Mime Type: '+mimeType.toString());
 
 
       var request = new MultipartRequest("POST", uri);

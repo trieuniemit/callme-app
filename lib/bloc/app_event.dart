@@ -1,3 +1,4 @@
+import 'package:app.callme/models/user_model.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class AppEvent extends Equatable {
@@ -11,15 +12,14 @@ abstract class AppEvent extends Equatable {
 class AppStarted extends AppEvent {}
 
 
-class LoginStart extends AppEvent {
+class Authenticated extends AppEvent {
+  final User user;
+  final String token;
 
-  final String username;
-  final String password;
-
-  LoginStart({this.username, this.password});
-
+  Authenticated({this.user, this.token});
+  
   @override
-  List<Object> get props => [username, password];
+  List<Object> get props => [token, user];
 }
 
 class LogOut extends AppEvent {}
