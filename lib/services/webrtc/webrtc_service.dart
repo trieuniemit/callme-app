@@ -10,11 +10,14 @@ class WebRTCService {
   var _dataChannels = new Map<String, RTCDataChannel>();
   
   List<RTCIceCandidate> _remoteCandidates = [];
+  List<RTCIceCandidate> _localCandidates = [];
+
+  List<RTCIceCandidate> get localCandidates =>  _localCandidates;
+  List<RTCIceCandidate> get remoteCandidates =>  _remoteCandidates;
 
   //final Function(Map<String, dynamic>) onSendMessage;
   final Function(MediaStream) onAddLocalStream;
   final Function(MediaStream) onAddRemoteStream;
-  final Function(Map) onCandidate;
   final Function(RTCIceConnectionState) onStateChange;
 
   MediaStream localStream;
@@ -23,7 +26,6 @@ class WebRTCService {
   WebRTCService({
     @required this.onAddLocalStream, 
     @required this.onAddRemoteStream,
-    @required this.onCandidate,
     @required this.onStateChange
   });
 
@@ -79,16 +81,13 @@ class WebRTCService {
     if (media != WebRTCMedia.DATA) {
       pc.addStream(localStream);
       pc.onIceCandidate = (candidate) {
-        this.onCandidate({
-          'sdpMLineIndex': candidate.sdpMlineIndex,
-          'sdpMid': candidate.sdpMid,
-          'candidate': candidate.candidate,
-        });
+        print('==WebRTC: New Candidate: $candidate');
+        _localCandidates.add(candidate);
       };
     }
 
     pc.onIceConnectionState = (RTCIceConnectionState  state) {
-      print("IceConnection State: $state");
+      print("IceConnection State: ${state.toString()}");
       this.onStateChange(state);
     };
 

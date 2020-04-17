@@ -16,7 +16,7 @@ class MainScreen extends StatelessWidget {
 
   void _onCallReceive(context, user, offerRecieved) {
     print("Call received.");
-    Navigator.of(context).pushNamed(AppRoutes.calling,
+    Navigator.of(context).pushNamed(AppRoutes.callReceive,
       arguments: {'user': user}
     );
   }

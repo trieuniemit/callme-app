@@ -1,14 +1,17 @@
-import 'package:flutter_webrtc/rtc_session_description.dart';
-
 enum WebRTCMedia {VIDEO, AUDIO, DATA}
 
 // setup iceServers
 Map<String, dynamic> iceServers = {
   'iceServers': [
     {
-      //'url': 'stun.l.google.com:19302',
+      'url': 'stun:stun.l.google.com:19302',
       // 'username': 'change_to_real_user',
       // 'credential': 'change_to_real_secret'
+    },
+    {
+      'url': 'turn:149.28.137.246',
+      'username': 'webrtc',
+      'credential': r"$*DfDbH?X>&yEZ5E"
     }
   ]
 };

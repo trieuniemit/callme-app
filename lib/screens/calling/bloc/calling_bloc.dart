@@ -74,14 +74,6 @@ class CallingBloc extends Bloc<CallingEvent, CallingState> {
         secondRenderer.srcObject = _webRTCService.localStream;
         print("RemoteStream ID: " + stream.id);
       },
-      onCandidate: (candidate) {
-        if (!_callNotAvailable) {
-          socketConn.emit('call_candidate', {
-            'target': user.socketId, 
-            'candidate' : candidate
-          });
-        }
-      },
       onStateChange: (state) {
         switch(state) {
           case RTCIceConnectionState.RTCIceConnectionStateConnected:

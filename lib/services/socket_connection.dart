@@ -75,6 +75,7 @@ class SocketConnection {
       "action": action,
       "data": data
     };
+    print('===WebSocket: Emit: $action');
     _channel.sink.add(json.encode(sinkData));
   }
 
