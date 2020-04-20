@@ -12,7 +12,7 @@ class ContactTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<MainBloc, MainState>(
       builder: (context, state) {
-        if (state.loading) {
+        if (state.contactLoading) {
           return Center(
             child:  CupertinoActivityIndicator(
               radius: 20
