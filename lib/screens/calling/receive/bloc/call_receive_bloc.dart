@@ -19,6 +19,9 @@ class CallReceiveBloc extends Bloc<CallReceiveEvent, CallReceiveState> {
 
   StreamSubscription<SocketMessage> _socketSubscription;
   WebRTCService _webRTCService;
+  Timer _timer;
+  int callLength = 0;
+
 
   SocketConnection get socketConn => SocketConnection.getInstance();
   User callingUser;
@@ -30,7 +33,6 @@ class CallReceiveBloc extends Bloc<CallReceiveEvent, CallReceiveState> {
   static CallReceiveBloc of(context) {
     return Provider.of<CallReceiveBloc>(context, listen: false);
   }
-
 
   @override
   CallReceiveInitial get initialState => CallReceiveInitial();
@@ -60,7 +62,9 @@ class CallReceiveBloc extends Bloc<CallReceiveEvent, CallReceiveState> {
       onStateChange: (state) {
         switch(state) {
           case RTCIceConnectionState.RTCIceConnectionStateConnected:
-            
+            _timer = Timer.periodic(Duration(seconds: 1), (length) {
+              callLength++;
+            });
             break;
           case RTCIceConnectionState.RTCIceConnectionStateFailed:
             this.add(CallReceiveEnded());
@@ -92,6 +96,9 @@ class CallReceiveBloc extends Bloc<CallReceiveEvent, CallReceiveState> {
     await secondRenderer.dispose();
     _webRTCService.close();
     Wakelock.disable();
+    
+    if(_timer != null)
+      _timer.cancel();
   }
 
   @override

@@ -24,13 +24,13 @@ class AppRoutes {
         return _routeConfig(RegisterScreen());
       case callReceive: 
         Map args = settings.arguments;
-        return _routeConfig(CallReceiveScreen(
+        return CupertinoPageRoute<int>(builder:(context) => CallReceiveScreen(
           callingUser: args['user']
         ));
       break;
       case callStart: 
         Map args = settings.arguments;
-        return _routeConfig(CallScreen(
+        return CupertinoPageRoute<int>(builder:(context) => CallScreen(
           callingUser: args['user']
         ));
       break;

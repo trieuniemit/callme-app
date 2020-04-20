@@ -1,3 +1,4 @@
+import 'package:app.callme/models/call_history.dart';
 import 'package:app.callme/models/user_model.dart';
 import 'package:equatable/equatable.dart';
 
@@ -8,7 +9,14 @@ abstract class MainEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class GetContact extends MainEvent {}
+class GetData extends MainEvent {
+  final bool refresh;
+
+  GetData({this.refresh = true});
+
+  @override
+  List<Object> get props => [refresh];
+}
 
 class CallReceived extends MainEvent {
   final User user;
@@ -33,4 +41,12 @@ class UpdateContact extends MainEvent {
   UpdateContact(this.user);
   @override
   List<Object> get props => [user];
+}
+
+class AddHistory extends MainEvent {
+  final CallHistory history;
+
+  AddHistory(this.history);
+  @override
+  List<Object> get props => [history];
 }

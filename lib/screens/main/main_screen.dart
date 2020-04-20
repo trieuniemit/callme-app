@@ -3,6 +3,7 @@ import 'package:app.callme/components/no_scroll_behavior.dart';
 import 'package:app.callme/components/rounded_container.dart';
 import 'package:app.callme/config/routes.dart';
 import 'package:app.callme/language.dart';
+import 'package:app.callme/models/call_history.dart';
 import 'package:app.callme/screens/main/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -14,11 +15,22 @@ import 'history_tab.dart';
 
 class MainScreen extends StatelessWidget {
 
-  void _onCallReceive(context, user) {
+  void _onCallReceive(context, user) async {
     print("Call received.");
-    Navigator.of(context).pushNamed(AppRoutes.callReceive,
+    
+    var length = await Navigator.of(context).pushNamed(AppRoutes.callReceive,
       arguments: {'user': user}
     );
+    
+    CallHistory history = CallHistory(
+      id: DateTime.now().millisecondsSinceEpoch,
+      user: user,
+      type: CallType.receive,
+      length: length is int ? length : 0,
+      dateTime: DateTime.now()
+    );
+
+    MainBloc.of(context).add(AddHistory(history));
   }
 
   @override
@@ -109,7 +121,7 @@ class MainScreen extends StatelessWidget {
               onSelected: (MenuItemChoice menuItemChoice) {
                 switch (menuItemChoice.key) {
                   case 'refresh':
-                    MainBloc.of(context).add(GetContact());
+                    MainBloc.of(context).add(GetData());
                   break;
                   case 'logout':
                     AppBloc.of(context).add(LogOut());

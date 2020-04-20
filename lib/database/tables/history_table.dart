@@ -9,6 +9,7 @@ class HistoryTable {
   static Map<String, dynamic> fields = {
     'id': "INTEGER PRIMARY KEY",
     'user': "TEXT",
+    'type': "INTERGER",
     'date_time': "INTERGER",
     'length': "INTERGER"
   };
@@ -29,7 +30,7 @@ class HistoryTable {
   Future<List<CallHistory>> getList(int offset, int limit) async {
     final Database db = await AppDB().database;
     var res = await db.query(tableName, 
-      orderBy: 'id ASC',
+      orderBy: 'id DESC',
       limit: limit,
       offset: offset
     );

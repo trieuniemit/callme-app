@@ -27,11 +27,12 @@ class CallBloc extends Bloc<CallEvent, CallState> {
   RTCVideoRenderer secondRenderer = RTCVideoRenderer();
   RTCVideoRenderer mainRenderer = RTCVideoRenderer();
 
+  int callLength = 0;
+  Timer _timer;
 
   static CallBloc of(context) {
     return Provider.of<CallBloc>(context, listen: false);
   }
-
 
   @override
   CallInitial get initialState => CallInitial();
@@ -67,6 +68,9 @@ class CallBloc extends Bloc<CallEvent, CallState> {
             break;
           case RTCIceConnectionState.RTCIceConnectionStateFailed:
             this.add(CallEnded());
+            _timer = Timer.periodic(Duration(seconds: 1), (length) {
+              callLength++;
+            });
             break;
           case RTCIceConnectionState.RTCIceConnectionStateDisconnected:
             
@@ -104,6 +108,7 @@ class CallBloc extends Bloc<CallEvent, CallState> {
     await secondRenderer.dispose();
     _webRTCService.close();
     Wakelock.disable();
+    _timer.cancel();
   }
 
   @override

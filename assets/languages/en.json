@@ -25,6 +25,7 @@
     "register_validate.password": "The Password is empty!",
     "register_validate.confirm_password": "The Confirm password is empty!",
     "register_validate.fullname": "The Nickname is empty!",
-    "register_validate.password_not_equal": "The Confirm password is not equal to password!"
+    "register_validate.password_not_equal": "The Confirm password is not equal to password!",
+    "empty_history": "Empty history!"
 
 }

@@ -1,5 +1,6 @@
 import 'package:app.callme/components/easy_listview.dart';
 import 'package:app.callme/config/routes.dart';
+import 'package:app.callme/models/call_history.dart';
 import 'package:app.callme/models/user_model.dart';
 import 'package:app.callme/screens/main/bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 class ContactTab extends StatelessWidget {
+
+  void _startCall(BuildContext context, User user) async {
+    MainBloc.of(context).add(CallToUser(user));
+
+    int length = await Navigator.of(context).pushNamed(AppRoutes.callStart,
+      arguments: {
+        'user': user
+      }
+    );
+
+    CallHistory history = CallHistory(
+      id: DateTime.now().millisecondsSinceEpoch,
+      user: user,
+      type: CallType.call,
+      length: length is int ? length : 0,
+      dateTime: DateTime.now()
+    );
+
+    MainBloc.of(context).add(AddHistory(history));
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MainBloc, MainState>(
@@ -26,14 +48,7 @@ class ContactTab extends StatelessWidget {
           itemBuilder: (context, index) {
             String name = contact[index].fullname;
             return CupertinoButton(
-              onPressed: () {
-                MainBloc.of(context).add(CallToUser(contact[index]));
-                Navigator.of(context).pushNamed(AppRoutes.callStart,
-                  arguments: {
-                    'user': contact[index]
-                  }
-                );
-              },
+              onPressed: () => _startCall(context, contact[index]),
               padding: EdgeInsets.all(0),
               child: ListTile(
                 dense: false,

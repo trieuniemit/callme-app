@@ -1,9 +1,10 @@
 import 'package:app.callme/models/call_history.dart';
 import 'package:app.callme/models/user_model.dart';
+import 'package:app.callme/screens/main/bloc/bloc.dart';
 
 class MainState  {
   final List<User> contact;
-  final List<User> history;
+  final List<CallHistory> history;
   User callingUser;
 
 
@@ -26,14 +27,13 @@ class MainState  {
     List<User> contact, 
     User callingUser,
     List<CallHistory> history,
-    Map<String, dynamic>offerRecieved,
     bool historyLoading, 
     bool contactLoading}
   ) {
     return MainState(
       contact: contact == null ? this.contact : contact,
       history: history == null ? this.history : history,
-      callingUser: callingUser == null ? this.callingUser : callingUser,
+      callingUser: callingUser,
       contactLoading: contactLoading == null ? this.contactLoading : contactLoading,
       historyLoading: historyLoading == null ? this.historyLoading : historyLoading,
     );
@@ -41,7 +41,6 @@ class MainState  {
 
   MainState callRecieved(User targetUser, {Map<String, dynamic> offerRecieved}) {
     return this.copyWith(
-      offerRecieved: offerRecieved,
       callingUser: targetUser
     );
   }
@@ -58,8 +57,11 @@ class MainState  {
   }
   
   MainState historyLoaded(List<CallHistory> history) {
+    List<CallHistory> his = List.from(this.history);
+    his.addAll(history);
+
     return this.copyWith(
-      history: history,
+      history: his,
       historyLoading: false
     );
   }
@@ -73,6 +75,15 @@ class MainState  {
       contact.insert(0, user);
       return copyWith();
     }
+  }
+
+  MainState addHistory(CallHistory history) {
+    List<CallHistory> his = List.from(this.history);
+    his.add(history);
+    return this.copyWith(
+      history: his,
+      callingUser: null
+    );
   }
 
 }

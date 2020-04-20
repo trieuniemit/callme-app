@@ -22,7 +22,6 @@ class User {
       "id": this.id,
       "username": this.username,
       "fullname": this.fullname,
-      "password": this.password,
       "socket_id": this.socketId
     };
   }

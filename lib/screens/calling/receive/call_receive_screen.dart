@@ -21,7 +21,7 @@ class CallReceiveScreen extends StatelessWidget {
 
     return WillPopScope(
       onWillPop: () async {
-        return true;
+        return false;
       },
       child: BlocProvider<CallReceiveBloc>(
         create: (context) => CallReceiveBloc(callingUser: callingUser),
@@ -29,7 +29,7 @@ class CallReceiveScreen extends StatelessWidget {
           body: BlocListener<CallReceiveBloc, CallReceiveState>(
             listener: (context, state) {
               if (state is CallReceiveEndedState) {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(CallReceiveBloc.of(context).callLength);
               }
             },
             child: BlocBuilder<CallReceiveBloc, CallReceiveState>(

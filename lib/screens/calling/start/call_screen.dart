@@ -43,7 +43,7 @@ class CallScreen extends StatelessWidget {
 
     return WillPopScope(
       onWillPop: () async {
-        return true;
+        return false;
       },
       child: BlocProvider<CallBloc>(
         create: (context) => CallBloc(callingUser: callingUser),
@@ -51,7 +51,7 @@ class CallScreen extends StatelessWidget {
           body: BlocListener<CallBloc, CallState>(
             listener: (context, state) {
               if (state is CallEndedState) {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(CallBloc.of(context).callLength);
               } else if (state is CallNotAvailableState) {
                 _onCallNotAvailableOrBusy(context, 'call_not_available');
               } else if (state is CallBusyState) {
