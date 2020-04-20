@@ -79,6 +79,14 @@ class CallScreen extends StatelessWidget {
                 return Stack(
                   children: [
                     Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("assets/images/calling_bg.jpg"),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Container(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
                       color: Colors.black,

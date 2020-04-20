@@ -44,6 +44,7 @@ class MainScreen extends StatelessWidget {
                     appBar: AppBar(
                       title: Text('Call Me'),
                       elevation: 0.0,
+                      centerTitle: false,
                       actions: _buildActions(context, appState),
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
@@ -98,12 +99,12 @@ class MainScreen extends StatelessWidget {
         child: Row(
           children: [
             Text(nickname, style: TextStyle(fontSize: 18)),
-            SizedBox(width: 10),
-            CircleAvatar(
-              maxRadius: 15,
-              backgroundColor: Colors.white,
-              backgroundImage: AssetImage('assets/images/empty-avatar.jpg'),
-            ),
+            //SizedBox(width: 10),
+            // CircleAvatar(
+            //   maxRadius: 15,
+            //   backgroundColor: Colors.white,
+            //   backgroundImage: AssetImage('assets/images/empty-avatar.jpg'),
+            // ),
             PopupMenuButton<MenuItemChoice>(
               onSelected: (MenuItemChoice menuItemChoice) {
                 switch (menuItemChoice.key) {
@@ -141,7 +142,8 @@ class MainScreen extends StatelessWidget {
                   );
                 }).toList();
               },
-            )
+            ),
+            SizedBox(width: 5),
           ],
         )
       ),
