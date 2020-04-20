@@ -7,7 +7,7 @@ class MainState  {
   final List<User> histories;
   User callingUser;
 
-  final Map<String, dynamic> offerRecieved;
+
   final bool loading;
 
   static MainState init() {
@@ -15,7 +15,6 @@ class MainState  {
   }
 
   MainState({
-    this.offerRecieved, 
     this.contact = const [], 
     this.histories = const [], 
     this.callingUser,
@@ -30,7 +29,6 @@ class MainState  {
     List<User> histories}
   ) {
     return MainState(
-      offerRecieved: offerRecieved==null?this.offerRecieved:offerRecieved,
       contact: contact == null ? this.contact : contact,
       histories: histories == null ? this.histories : histories,
       callingUser: callingUser == null ? this.callingUser : callingUser,

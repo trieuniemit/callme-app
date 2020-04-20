@@ -26,10 +26,12 @@ class HistoryTable {
     await db.insert(tableName, row.toMap());
   }
 
-  Future<List<CallHistory>> getAll() async {
+  Future<List<CallHistory>> getList(int offset, int limit) async {
     final Database db = await AppDB().database;
     var res = await db.query(tableName, 
       orderBy: 'id ASC',
+      limit: limit,
+      offset: offset
     );
     print('Get all: $res');
     return res.isNotEmpty ? res.map((c) => CallHistory.fromMap(c)).toList() : [];
