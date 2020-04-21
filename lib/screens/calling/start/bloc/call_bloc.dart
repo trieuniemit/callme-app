@@ -108,7 +108,9 @@ class CallBloc extends Bloc<CallEvent, CallState> {
     await secondRenderer.dispose();
     _webRTCService.close();
     Wakelock.disable();
-    _timer.cancel();
+
+    if(_timer != null)
+      _timer.cancel();
   }
 
   @override
