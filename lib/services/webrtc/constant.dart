@@ -12,6 +12,11 @@ Map<String, dynamic> iceServers = {
       'url': 'turn:149.28.137.246',
       'username': 'webrtc',
       'credential': r"$*DfDbH?X>&yEZ5E"
+    },
+    {
+      'url': 'turn:157.230.34.76:2222',
+      'username': 'admin',
+      'credential': "admin@123"
     }
   ]
 };
