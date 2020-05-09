@@ -81,7 +81,7 @@ class WebRTCService {
     if (media != WebRTCMedia.DATA) {
       pc.addStream(localStream);
       pc.onIceCandidate = (candidate) {
-        print('==WebRTC: New Candidate: $candidate');
+        print('==WebRTC: New Candidate: ${candidate.toMap()}');
         _localCandidates.add(candidate);
       };
     }
